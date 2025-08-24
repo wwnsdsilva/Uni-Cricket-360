@@ -1,0 +1,18 @@
+package com.nsbm.uni_cricket_360.enums;
+
+public enum InjuryType {
+    HAMSTRING_STRAIN,
+    GROIN_STRAIN,
+    SIDE_STRAIN,
+    SHOULDER_INJURY,
+    ELBOW_TENDONITIS,
+    WRIST_SPRRAIN,
+    FINGER_FRACTURE,
+    CONCUSSION,
+    STRESS_FRACTURE,
+    ANKLE_SPRAIN,
+    KNEE_LIGAMENT_INJURY,
+    ACHILLES_RUPTURE,
+    BLISTERS,
+    OTHER
+}
