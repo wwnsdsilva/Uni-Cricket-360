@@ -73,10 +73,16 @@
 			<artifactId>h2</artifactId>
 			<version>2.3.232</version>
 		</dependency>
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!-- Compiler plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -85,10 +91,13 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.38</version> <!-- make sure this is defined -->
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- Spring Boot plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -103,42 +112,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<!--<build>
-		<plugins>
-			&lt;!&ndash; Compiler plugin &ndash;&gt;
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version> &lt;!&ndash; supports Java 21 &ndash;&gt;
-				<configuration>
-					<source>21</source>
-					<target>21</target>
-					<release>21</release>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.38</version> &lt;!&ndash; make sure this is defined &ndash;&gt;
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-
-			&lt;!&ndash; Spring Boot plugin &ndash;&gt;
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>-->
 
 </project>
