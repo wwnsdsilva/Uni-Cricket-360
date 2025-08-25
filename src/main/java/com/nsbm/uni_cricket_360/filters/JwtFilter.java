@@ -64,6 +64,20 @@ public class JwtFilter extends org.springframework.web.filter.OncePerRequestFilt
                 return; // IMPORTANT: to stop filter chain
             }
         }
+        /*else {
+            // Token is not defined -> return JSON response instead of proceeding
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.setContentType("application/json");
+
+            ResponseUtil error = new ResponseUtil(
+                    406,
+                    "Request is unauthorized.",
+                    null
+            );
+
+            new ObjectMapper().writeValue(response.getOutputStream(), error);
+            return; // IMPORTANT: to stop filter chain
+        }*/
 
         filterChain.doFilter(request, response);
     }

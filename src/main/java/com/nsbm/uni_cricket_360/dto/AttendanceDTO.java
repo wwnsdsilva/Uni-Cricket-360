@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,5 +17,7 @@ public class AttendanceDTO {
     private Long id;
     private PlayerDTO player;
     private TrainingSessionDTO session;
+
+    @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
 }

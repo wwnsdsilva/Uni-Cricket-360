@@ -95,4 +95,21 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ImageFileException("Failed to store image file: " + e.getMessage());
         }
     }
+
+    @Override
+    public PlayerDTO updatePlayer(PlayerDTO dto) {
+        Player existing = playerRepo.findById(dto.getId())
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getId()));
+
+        existing.setFirst_name(dto.getFirst_name());
+        existing.setLast_name(dto.getLast_name());
+        existing.setDob(dto.getDob());
+        existing.setAge(dto.getAge());
+        existing.setContact(dto.getContact());
+        existing.setPlayer_role(dto.getPlayer_role());
+        existing.setImage_url(dto.getImage_url()); // update only if new image is provided
+
+        Player updated = playerRepo.save(existing);
+        return mapper.map(updated, PlayerDTO.class);
+    }
 }

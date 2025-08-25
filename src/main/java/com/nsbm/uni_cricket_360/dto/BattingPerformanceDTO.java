@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -18,5 +21,7 @@ public class BattingPerformanceDTO {
     private int balls_faced;
     private int fours;
     private int sixes;
+
+    @Enumerated(EnumType.STRING)
     private DismissalType dismissal_type;
 }

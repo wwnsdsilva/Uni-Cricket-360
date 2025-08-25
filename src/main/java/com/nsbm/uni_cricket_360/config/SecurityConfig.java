@@ -41,12 +41,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
          http.csrf().disable()
-                /*.authorizeHttpRequests()
-                .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/v1/coach/**").hasAnyRole("COACH", "ADMIN")
-                .antMatchers("/api/v1/player/**").hasAnyRole("PLAYER", "COACH", "ADMIN")
-                .anyRequest().authenticated()*/
                  .authorizeHttpRequests(auth -> auth
                          .antMatchers("/api/v1/auth/**").permitAll()
                          .antMatchers("/api/v1/admin/**").hasRole("ADMIN")

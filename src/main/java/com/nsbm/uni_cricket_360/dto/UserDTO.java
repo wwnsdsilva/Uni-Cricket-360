@@ -1,11 +1,14 @@
 package com.nsbm.uni_cricket_360.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nsbm.uni_cricket_360.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

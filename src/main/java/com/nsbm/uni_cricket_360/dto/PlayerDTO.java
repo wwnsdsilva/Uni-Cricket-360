@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -19,8 +22,13 @@ public class PlayerDTO extends UserDTO {
     private LocalDate dob;
 
     private int age;
+
+    @Pattern(regexp = "^[0-9]{10}$", message = "Contact number must be exactly 10 digits")
     private String contact;
+
+    @Enumerated(EnumType.STRING)
     private PlayerRole player_role;
+
     private String image_url;
     private TeamDTO team;
 }

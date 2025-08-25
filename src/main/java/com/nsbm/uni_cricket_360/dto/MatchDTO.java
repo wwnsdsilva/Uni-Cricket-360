@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -21,8 +23,13 @@ public class MatchDTO {
     private LocalDateTime date_time;
     private String venue;
     private int overs_per_inning;
+
+    @Enumerated(EnumType.STRING)
     private MatchStatus status;
+
+    @Enumerated(EnumType.STRING)
     private MatchType match_type;
+
     private String result;
     private String image_url;
     private AdminDTO scheduled_by;
