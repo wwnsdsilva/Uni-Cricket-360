@@ -26,7 +26,7 @@ public class BowlingPerformance {
     @JoinColumn(name = "player_id", referencedColumnName = "id", nullable = false)
     private Player player;
 
-    private double pvers;
-    private int runsConceded;
+    private double overs;
+    private int runs_conceded;
     private int wickets;
 }

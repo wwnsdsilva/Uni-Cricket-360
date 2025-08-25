@@ -26,10 +26,10 @@ public class Injury {
     private Player player;
 
     @Enumerated(EnumType.STRING)
-    private InjuryType injuryType;
+    private InjuryType injury_type;
 
-    private LocalDate dateReported;
-    private int recoveryDays;
+    private LocalDate date_reported;
+    private int recovery_days;
 
     @Enumerated(EnumType.STRING)
     private InjuryStatus status;

@@ -21,6 +21,10 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String teamName;
+    private String team_name;
     private String venue;
+
+    public Team(Long id) {
+        this.id = id;
+    }
 }

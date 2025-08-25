@@ -15,6 +15,6 @@ public class FitnessTestDTO {
     private Long id;
     private PlayerDTO player;
     private LocalDate date;
-    private double sprintTime;
-    private double beepLevel;
+    private double sprint_time;
+    private double beep_level;
 }

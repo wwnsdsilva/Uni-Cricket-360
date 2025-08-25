@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ToString
 @Entity

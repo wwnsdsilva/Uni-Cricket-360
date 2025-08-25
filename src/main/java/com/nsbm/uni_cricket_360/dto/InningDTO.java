@@ -12,7 +12,7 @@ import lombok.ToString;
 public class InningDTO {
     private Long id;
     private MatchDTO match;
-    private TeamDTO battingTeam;
+    private TeamDTO batting_team;
     private int runs;
     private int wickets;
     private double overs;

@@ -26,26 +26,26 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "home_team_id", referencedColumnName = "id")
-    private Team homeTeam;
+    private Team home_team;
 
     @ManyToOne
     @JoinColumn(name = "away_team_id", referencedColumnName = "id")
-    private Team awayTeam;
+    private Team away_team;
 
     private LocalDateTime dateTime;
     private String venue;
-    private int oversPerInning;
+    private int overs_per_inning;
 
     @Enumerated(EnumType.STRING)
     private MatchStatus status;
 
     @Enumerated(EnumType.STRING)
-    private MatchType matchType;
+    private MatchType match_type;
 
     private String result;
-    private String imageUrl;
+    private String image_url;
 
     @ManyToOne
     @JoinColumn(name = "scheduled_by", referencedColumnName = "id", nullable = false)
-    private Admin scheduledBy;
+    private Admin scheduled_by;
 }

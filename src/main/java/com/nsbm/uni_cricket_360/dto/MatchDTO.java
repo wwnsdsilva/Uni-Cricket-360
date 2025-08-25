@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 public class MatchDTO {
     private Long id;
     private String description;
-    private TeamDTO homeTeam;
-    private TeamDTO awayTeam;
-    private LocalDateTime dateTime;
+    private TeamDTO home_team;
+    private TeamDTO away_team;
+    private LocalDateTime date_time;
     private String venue;
-    private int oversPerInning;
+    private int overs_per_inning;
     private MatchStatus status;
-    private MatchType matchType;
+    private MatchType match_type;
     private String result;
-    private String imageUrl;
-    private AdminDTO scheduledBy;
+    private String image_url;
+    private AdminDTO scheduled_by;
 }

@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @ToString
 public class EventDTO {
     private Long id;
-    private String eventTitle;
-    private LocalDateTime dateTime;
+    private String event_title;
+    private LocalDateTime date_time;
     private String venue;
     private String description;
-    private String imageUrl;
-    private AdminDTO createdBy;
+    private String image_url;
+    private AdminDTO created_by;
 }

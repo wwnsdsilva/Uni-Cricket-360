@@ -14,6 +14,6 @@ public class FieldingPerformanceDTO {
     private MatchDTO match;
     private PlayerDTO player;
     private int catches;
-    private int runOuts;
+    private int run_outs;
     private int stumpings;
 }

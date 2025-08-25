@@ -24,6 +24,6 @@ public class FitnessTest {
     private Player player;
 
     private LocalDate date;
-    private double sprintTime;
-    private double beepLevel;
+    private double sprint_time;
+    private double beep_level;
 }

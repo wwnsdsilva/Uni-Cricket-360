@@ -13,7 +13,7 @@ public class BowlingPerformanceDTO {
     private Long id;
     private InningDTO inning;
     private PlayerDTO player;
-    private double pvers;
-    private int runsConceded;
+    private double overs;
+    private int runs_conceded;
     private int wickets;
 }

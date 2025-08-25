@@ -14,7 +14,7 @@ import javax.persistence.*;
 @ToString
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "user_role", discriminatorType = DiscriminatorType.STRING)
 public class User {
 
     @Id
@@ -30,5 +30,10 @@ public class User {
     @Column(unique = true, nullable = false)
     private String password;
 
-//    private String role;     // role handled by discriminator (ADMIN, COACH, PLAYER)
+    /*
+    * This way, Hibernate will read the discriminator column directly into the field.
+    * You cannot update it (Hibernate controls it).
+    * */
+    @Column(name = "user_role", insertable = false, updatable = false)
+    private String user_role;
 }

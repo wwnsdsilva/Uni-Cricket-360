@@ -16,8 +16,8 @@ import java.time.LocalDate;
 public class InjuryDTO {
     private Long id;
     private PlayerDTO player;
-    private InjuryType injuryType;
-    private LocalDate dateReported;
-    private int recoveryDays;
+    private InjuryType injury_type;
+    private LocalDate date_reported;
+    private int recovery_days;
     private InjuryStatus status;
 }

@@ -27,6 +27,6 @@ public class FieldingPerformance {
     private Player player;
 
     private int catches;
-    private int runOuts;
+    private int run_outs;
     private int stumpings;
 }

@@ -18,16 +18,16 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "id") //  // Player.id is also User.id
 public class Player extends User {
 
-    private String firstName;
-    private String lastName;
+    private String first_name;
+    private String last_name;
     private LocalDate dob;
     private int age;
-    private int contact;
+    private String contact;
 
     @Enumerated(EnumType.STRING)
-    private PlayerRole role;
+    private PlayerRole player_role;
 
-    private String imageUrl;
+    private String image_url;
 
     @ManyToOne
     @JoinColumn(name = "team_id", referencedColumnName = "id", nullable = false)

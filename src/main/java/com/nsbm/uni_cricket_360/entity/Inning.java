@@ -24,7 +24,7 @@ public class Inning {
 
     @ManyToOne
     @JoinColumn(name = "batting_team_id", referencedColumnName = "id", nullable = false)
-    private Team battingTeam;
+    private Team batting_team;
 
     private int runs;
     private int wickets;

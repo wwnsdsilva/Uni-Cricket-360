@@ -6,12 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ToString
-public class CoachDTO {
-    private Long id;
-    private String username;
-    private String email;
-    private String password;
+public class CoachDTO extends UserDTO{
 }

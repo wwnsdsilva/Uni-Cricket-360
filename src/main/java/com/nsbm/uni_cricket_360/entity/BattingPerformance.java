@@ -28,10 +28,10 @@ public class BattingPerformance {
     private Player player;
 
     private int runs;
-    private int ballsFaced;
+    private int balls_faced;
     private int fours;
     private int sixes;
 
     @Enumerated(EnumType.STRING)
-    private DismissalType dismissalType;
+    private DismissalType dismissal_type;
 }

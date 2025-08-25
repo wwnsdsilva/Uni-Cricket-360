@@ -19,13 +19,13 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String eventTitle;
-    private LocalDateTime dateTime;
+    private String event_title;
+    private LocalDateTime date_time;
     private String venue;
     private String description;
-    private String imageUrl;
+    private String image_url;
 
     @ManyToOne
     @JoinColumn (name = "created_by", referencedColumnName = "id", nullable = false)
-    private Admin createdBy;
+    private Admin created_by;
 }

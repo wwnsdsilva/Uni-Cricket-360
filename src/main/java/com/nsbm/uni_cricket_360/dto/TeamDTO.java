@@ -11,6 +11,10 @@ import lombok.ToString;
 @ToString
 public class TeamDTO {
     private Long id;
-    private String teamName;
+    private String team_name;
     private String venue;
+
+    public TeamDTO(Long id) {
+        this.id = id;
+    }
 }
