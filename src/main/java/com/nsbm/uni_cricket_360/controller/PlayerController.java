@@ -3,6 +3,7 @@ package com.nsbm.uni_cricket_360.controller;
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
 import com.nsbm.uni_cricket_360.dto.UserDTO;
 import com.nsbm.uni_cricket_360.service.PlayerService;
+import com.nsbm.uni_cricket_360.util.LoginResponseUtil;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,14 @@ public class PlayerController {
 
         // save the image and get URL/path
         if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl = playerService.savePlayerImage(imageFile); // implement this
+            // String imageUrl = playerService.savePlayerImage(imageFile);
+            String imageUrl;
+            try {
+                imageUrl = playerService.savePlayerImage(imageFile);
+            } catch (RuntimeException ex) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseUtil(500, ex.getMessage(), null));
+            }
             dto.setImage_url(imageUrl);
         }
 

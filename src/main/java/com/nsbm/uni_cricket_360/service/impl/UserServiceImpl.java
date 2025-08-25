@@ -13,6 +13,7 @@ import com.nsbm.uni_cricket_360.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${admin.registration.secret}")
+    private String adminSecret;
+
     @Override
     public List<UserDTO> getAllUsers() {
         return mapper.map(userRepo.findAll(), new TypeToken<List<UserDTO>>() {}.getType());
@@ -43,10 +47,19 @@ public class UserServiceImpl implements UserService {
         System.out.println(dto);
         System.out.println(dto.getUser_role());
 
+        // Check admin key if role is ADMIN
+        if ("ADMIN".equalsIgnoreCase(dto.getUser_role())) {
+            if (dto.getAdmin_key() == null || !dto.getAdmin_key().equals(adminSecret)) {
+                throw new IllegalArgumentException("Invalid admin registration key!");
+            }
+        }
+
         User user;
 
         // Pick correct subclass
-        switch (dto.getUser_role().toUpperCase()) {
+        String role = dto.getUser_role().toUpperCase();
+
+        switch (role) {
             case "ADMIN":
                 user = mapper.map(dto, Admin.class);
                 break;
@@ -56,11 +69,8 @@ public class UserServiceImpl implements UserService {
             case "PLAYER":
                 user = mapper.map(dto, Player.class);
                 break;
-            case "":
-                user = mapper.map(dto, User.class);
-                break;
             default:
-                throw new IllegalArgumentException("Invalid user role: " + dto.getUser_role());
+                throw new IllegalArgumentException("Invalid user role: " + role);
         }
 
         System.out.println("user before saving");

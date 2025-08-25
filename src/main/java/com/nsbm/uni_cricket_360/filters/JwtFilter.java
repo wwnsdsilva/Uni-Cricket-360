@@ -1,6 +1,10 @@
 package com.nsbm.uni_cricket_360.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nsbm.uni_cricket_360.util.JwtUtil;
+import com.nsbm.uni_cricket_360.util.ResponseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,11 +21,8 @@ import java.util.Collections;
 @Component
 public class JwtFilter extends org.springframework.web.filter.OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-
-    public JwtFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -41,14 +42,26 @@ public class JwtFilter extends org.springframework.web.filter.OncePerRequestFilt
                                 null,
                                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user_role))
                         );
-//                        new UsernamePasswordAuthenticationToken(email, null, java.util.List.of());
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (Exception e) {
-                System.out.println("JWT validation failed: " + e.getMessage());
+                // System.out.println("JWT validation failed: " + e.getMessage());
+
+                // Token invalid/expired -> return JSON response instead of proceeding
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json");
+
+                ResponseUtil error = new ResponseUtil(
+                        403,
+                        "Access forbidden. Please refresh your token and try again",
+                        null
+                );
+
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                return; // IMPORTANT: to stop filter chain
             }
         }
 
