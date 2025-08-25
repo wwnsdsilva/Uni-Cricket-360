@@ -54,8 +54,6 @@ public class AuthServiceImpl implements AuthService {
         String user_role = user.getUser_role(); // ADMIN / COACH / PLAYER
         String token = jwtUtil.generateToken(user.getUsername(), user.getEmail(), user_role);
 
-
-
         return ResponseEntity.status(HttpStatus.OK).body(
             new ResponseUtil(
                 200,
