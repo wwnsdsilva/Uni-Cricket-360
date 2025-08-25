@@ -13,6 +13,7 @@ import com.nsbm.uni_cricket_360.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +29,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public List<UserDTO> getAllUsers() {
         return mapper.map(userRepo.findAll(), new TypeToken<List<UserDTO>>() {}.getType());
     }
-
-
-    /*public UserDTO saveUser(UserDTO dto) {
-        return mapper.map(userRepo.save(mapper.map(dto, User.class)), UserDTO.class);
-    }*/
 
     @Override
     public UserDTO saveUser(UserDTO dto) {
@@ -66,6 +65,9 @@ public class UserServiceImpl implements UserService {
 
         System.out.println("user before saving");
         System.out.println(user);
+
+        //Hash password before saving
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         // Save entity
         User saved = userRepo.save(user);
