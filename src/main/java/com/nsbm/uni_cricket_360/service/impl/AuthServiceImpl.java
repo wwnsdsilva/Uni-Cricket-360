@@ -5,7 +5,7 @@ import com.nsbm.uni_cricket_360.entity.User;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
 import com.nsbm.uni_cricket_360.service.AuthService;
 import com.nsbm.uni_cricket_360.util.JwtUtil;
-import com.nsbm.uni_cricket_360.util.LoginResponse;
+import com.nsbm.uni_cricket_360.util.LoginResponseUtil;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,14 +50,17 @@ public class AuthServiceImpl implements AuthService {
             );
         }
 
-        String user_role = user.getClass().getSimpleName().toUpperCase(); // ADMIN, PLAYER, COACH
+//        String user_role = user.getClass().getSimpleName().toUpperCase(); // ADMIN, PLAYER, COACH
+        String user_role = user.getUser_role(); // ADMIN / COACH / PLAYER
         String token = jwtUtil.generateToken(user.getUsername(), user.getEmail(), user_role);
+
+
 
         return ResponseEntity.status(HttpStatus.OK).body(
             new ResponseUtil(
                 200,
                 "Login successful!",
-                new LoginResponse(
+                new LoginResponseUtil(
                         "User with email "+user.getEmail()+" login successfully!",
                         token,
                         user.getUsername(),

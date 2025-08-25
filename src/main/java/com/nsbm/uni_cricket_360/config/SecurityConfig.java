@@ -25,7 +25,7 @@ public class SecurityConfig {
     }
 
     // For temporarily disable security for all endpoints
-    @Bean
+    /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable() // disable CSRF for testing with curl/Postman
@@ -36,17 +36,31 @@ public class SecurityConfig {
                 .httpBasic().disable();
 
         return http.build();
-    }
+    }*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        /*http
+                .csrf().disable()
                 .authorizeHttpRequests()
                 .antMatchers("/api/v1/auth/**").permitAll() // login/signup allowed
                 .anyRequest().authenticated()
                 .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
+
+        http
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/v1/coach/**").hasAnyRole("COACH", "ADMIN")
+                .antMatchers("/api/v1/player/**").hasAnyRole("PLAYER", "COACH", "ADMIN")
+                .anyRequest().authenticated()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+
+        // Add JWT filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
