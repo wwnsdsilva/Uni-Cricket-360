@@ -3,6 +3,7 @@ package com.nsbm.uni_cricket_360.service.impl;
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
 import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.entity.Team;
+import com.nsbm.uni_cricket_360.enums.PlayerRole;
 import com.nsbm.uni_cricket_360.exception.ImageFileException;
 import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.PlayerRepo;
@@ -48,6 +49,12 @@ public class PlayerServiceImpl implements PlayerService {
     public List<PlayerDTO> getAllPlayers() {
         return mapper.map(playerRepo.findAll(), new TypeToken<List<PlayerDTO>>() {
         }.getType());
+    }
+
+    @Override
+    public Player getPlayerById(Long id) {
+        return playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
     }
 
     @Override
@@ -111,5 +118,20 @@ public class PlayerServiceImpl implements PlayerService {
 
         Player updated = playerRepo.save(existing);
         return mapper.map(updated, PlayerDTO.class);
+    }
+
+    @Override
+    public Player updatePlayerRole(Long id, PlayerRole newRole) {
+        Player player = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+        player.setPlayer_role(newRole);
+        return playerRepo.save(player);
+    }
+
+    @Override
+    public void deletePlayer(Long id) {
+        Player player = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+        playerRepo.delete(player);
     }
 }

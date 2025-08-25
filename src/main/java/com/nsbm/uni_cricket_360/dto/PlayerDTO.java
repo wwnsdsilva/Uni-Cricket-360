@@ -31,4 +31,9 @@ public class PlayerDTO extends UserDTO {
 
     private String image_url;
     private TeamDTO team;
+
+    public PlayerDTO (PlayerRole player_role) {
+        this.player_role = player_role;
+    }
+
 }

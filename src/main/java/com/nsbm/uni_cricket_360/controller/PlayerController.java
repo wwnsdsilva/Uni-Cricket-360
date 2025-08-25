@@ -2,6 +2,8 @@ package com.nsbm.uni_cricket_360.controller;
 
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
 import com.nsbm.uni_cricket_360.dto.UserDTO;
+import com.nsbm.uni_cricket_360.entity.Player;
+import com.nsbm.uni_cricket_360.enums.PlayerRole;
 import com.nsbm.uni_cricket_360.service.PlayerService;
 import com.nsbm.uni_cricket_360.util.LoginResponseUtil;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -31,6 +36,17 @@ public class PlayerController {
                         playerService.getAllPlayers()
                 )
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseUtil> getPlayerById(@PathVariable Long id) {
+        try {
+            Player player = playerService.getPlayerById(id);
+            return ResponseEntity.ok(new ResponseUtil(200, "Player fetched successfully!", player));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseUtil(404, ex.getMessage(), null));
+        }
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -93,6 +109,48 @@ public class PlayerController {
                         playerService.updatePlayer(dto)
                 )
         );
+    }
+
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<ResponseUtil> updatePlayerRole(
+            @PathVariable Long id,
+            @RequestBody PlayerDTO dto) {
+
+        String newRoleStr = String.valueOf(dto.getPlayer_role());
+        if (newRoleStr == null || newRoleStr.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseUtil(400, "player_role is required", null));
+        }
+
+        PlayerRole newRole;
+        try {
+            newRole = PlayerRole.valueOf(newRoleStr.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            String allowedValues = Arrays.stream(PlayerRole.values())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ResponseUtil(400, "Invalid player_role. Allowed values: [" + allowedValues + "]", null));
+        }
+
+        try {
+            Player updatedPlayer = playerService.updatePlayerRole(id, newRole);
+            return ResponseEntity.ok(new ResponseUtil(200, "Player role updated successfully!", updatedPlayer));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseUtil(404, ex.getMessage(), null));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseUtil> deletePlayer(@PathVariable Long id) {
+        try {
+            playerService.deletePlayer(id);
+            return ResponseEntity.ok(new ResponseUtil(200, "Player deleted successfully!", null));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseUtil(404, ex.getMessage(), null));
+        }
     }
 
 }
