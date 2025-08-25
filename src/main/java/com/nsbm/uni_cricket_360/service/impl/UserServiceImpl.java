@@ -8,6 +8,8 @@ import com.nsbm.uni_cricket_360.entity.Admin;
 import com.nsbm.uni_cricket_360.entity.Coach;
 import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.entity.User;
+import com.nsbm.uni_cricket_360.exception.InvalidCredentialsException;
+import com.nsbm.uni_cricket_360.exception.InvalidRoleException;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
 import com.nsbm.uni_cricket_360.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
         // Check admin key if role is ADMIN
         if ("ADMIN".equalsIgnoreCase(dto.getUser_role())) {
             if (dto.getAdmin_key() == null || !dto.getAdmin_key().equals(adminSecret)) {
-                throw new IllegalArgumentException("Invalid admin registration key!");
+                throw new InvalidCredentialsException("Invalid admin registration key!");
             }
         }
 
@@ -70,7 +72,7 @@ public class UserServiceImpl implements UserService {
                 user = mapper.map(dto, Player.class);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid user role: " + role);
+                throw new InvalidRoleException("Invalid user role: " + role);
         }
 
         System.out.println("user before saving");

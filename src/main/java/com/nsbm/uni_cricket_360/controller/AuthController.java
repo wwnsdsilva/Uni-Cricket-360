@@ -57,19 +57,6 @@ public class AuthController {
         }
     }
 
-
-    // for login 1
-    /*@PostMapping(path = "login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseUtil> login(@RequestBody LoginDTO dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseUtil(
-                        200,
-                        "OK",
-                        authService.login(dto)
-                )
-        );
-    }*/
-
     @PostMapping("/login")
     public ResponseEntity<ResponseUtil> login(@RequestBody LoginDTO req, HttpServletResponse resp) {
         LoginResponseUtil res;
@@ -103,7 +90,6 @@ public class AuthController {
             HttpServletResponse resp) {
 
         if (rtCookie == null || rtCookie.isEmpty()) {
-//            throw new RuntimeException("Missing refresh token cookie");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseUtil(404, "Missing refresh token cookie", null));
         }

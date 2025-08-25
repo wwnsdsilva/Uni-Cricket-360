@@ -1,6 +1,7 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.entity.RefreshToken;
+import com.nsbm.uni_cricket_360.exception.ExpiredTokenException;
 import com.nsbm.uni_cricket_360.repository.RefreshTokenRepo;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
 import com.nsbm.uni_cricket_360.service.RefreshTokenService;
@@ -53,7 +54,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshToken refreshToken = refreshTokenRepo.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
         if (refreshToken.isRevoked() || refreshToken.getExpires_at().isBefore(Instant.now())) {
-            throw new RuntimeException("Refresh token has been expired or revoked. Try login again.");
+            throw new ExpiredTokenException("Refresh token has been expired or revoked. Try login again.");
         }
         return refreshToken;
     }

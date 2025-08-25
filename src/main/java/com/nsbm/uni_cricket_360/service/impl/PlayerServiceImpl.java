@@ -1,32 +1,28 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
-import com.nsbm.uni_cricket_360.dto.UserDTO;
 import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.entity.Team;
+import com.nsbm.uni_cricket_360.exception.ImageFileException;
+import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.PlayerRepo;
 import com.nsbm.uni_cricket_360.repository.TeamRepo;
 import com.nsbm.uni_cricket_360.service.PlayerService;
-import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -63,7 +59,7 @@ public class PlayerServiceImpl implements PlayerService {
 
         // Fetch actual team from DB to avoid null fields
         if (dto.getTeam() != null && dto.getTeam().getId() != null) {
-            Team team = teamRepo.findById(dto.getTeam().getId()).orElseThrow(() -> new RuntimeException("Team not found with id " + dto.getTeam().getId()));
+            Team team = teamRepo.findById(dto.getTeam().getId()).orElseThrow(() -> new NotFoundException("Team not found with id: " + dto.getTeam().getId()));
             player.setTeam(team);
         }
 
@@ -96,7 +92,7 @@ public class PlayerServiceImpl implements PlayerService {
             return filePath.toString();
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store image file: " + e.getMessage(), e);
+            throw new ImageFileException("Failed to store image file: " + e.getMessage());
         }
     }
 }

@@ -31,20 +31,6 @@ public class PlayerController {
         );
     }
 
-    /*@ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseUtil> savePlayer(@RequestBody PlayerDTO dto) {
-        System.out.println("------------------- Inside PlayerContoller: savePlayer -------------------");
-        System.out.println(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseUtil(
-                        201,
-                        "Player registered successfully..!",
-                        playerService.savePlayer(dto)
-                )
-        );
-    }*/
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseUtil> savePlayer(
             @RequestPart("player") PlayerDTO dto,
@@ -55,7 +41,6 @@ public class PlayerController {
 
         // save the image and get URL/path
         if (imageFile != null && !imageFile.isEmpty()) {
-            // String imageUrl = playerService.savePlayerImage(imageFile);
             String imageUrl;
             try {
                 imageUrl = playerService.savePlayerImage(imageFile);
@@ -74,4 +59,5 @@ public class PlayerController {
                 )
         );
     }
+
 }

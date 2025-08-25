@@ -11,4 +11,5 @@ public interface PlayerService {
     PlayerDTO savePlayer(PlayerDTO dto);
 
     String savePlayerImage(MultipartFile imageFile);
+
 }
