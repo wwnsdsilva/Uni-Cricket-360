@@ -59,9 +59,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDTO savePlayer(PlayerDTO dto) {
-        System.out.println("------------------- Inside PlayerServiceImpl: savePlayer -------------------");
-        System.out.println(dto);
-
         Player player = mapper.map(dto, Player.class);
 
         // Fetch actual team from DB to avoid null fields

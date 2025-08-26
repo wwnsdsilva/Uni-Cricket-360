@@ -38,8 +38,6 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDTO saveTeam(TeamDTO dto) {
-        System.out.println("------------------- Inside TeamServiceImpl: saveTeam -------------------");
-        System.out.println(dto);
         return mapper.map(teamRepo.save(mapper.map(dto, Team.class)), TeamDTO.class);
     }
 

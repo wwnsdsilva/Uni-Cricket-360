@@ -37,4 +37,7 @@ public class User {
     @Column(name = "user_role", insertable = false, updatable = false)
     private String user_role;
 
+    public User(Long id) {
+        this.id = id;
+    }
 }

@@ -16,4 +16,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @DiscriminatorValue("ADMIN")
 @PrimaryKeyJoinColumn(name = "id")
 public class Admin extends User{
+
+    public Admin(Long id) {
+       super(id);
+    }
 }
