@@ -10,6 +10,7 @@ import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.entity.User;
 import com.nsbm.uni_cricket_360.exception.InvalidCredentialsException;
 import com.nsbm.uni_cricket_360.exception.InvalidRoleException;
+import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
 import com.nsbm.uni_cricket_360.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -41,6 +42,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getAllUsers() {
         return mapper.map(userRepo.findAll(), new TypeToken<List<UserDTO>>() {}.getType());
+    }
+
+    @Override
+    public UserDTO getUserById(Long id) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
+        return mapToDTO(user);
     }
 
     @Override
@@ -88,14 +96,65 @@ public class UserServiceImpl implements UserService {
         System.out.println(saved);
 
         // Map back to role-specific DTO
-        if (saved instanceof Admin) {
-            return mapper.map(saved, AdminDTO.class);
-        } else if (saved instanceof Coach) {
-            return mapper.map(saved, CoachDTO.class);
-        } else if (saved instanceof Player) {
-            return mapper.map(saved, PlayerDTO.class);
+        return mapToDTO(saved);
+    }
+
+    @Override
+    public UserDTO updateUser(Long id, UserDTO dto) {
+        User existing = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
+
+        // check admin secret if new role = ADMIN
+        if ("ADMIN".equalsIgnoreCase(dto.getUser_role())) {
+            if (dto.getAdmin_key() == null || !dto.getAdmin_key().equals(adminSecret)) {
+                throw new InvalidCredentialsException("Invalid admin registration key!");
+            }
         }
 
-        return mapper.map(saved, UserDTO.class);
+        // Update fields
+        existing.setUsername(dto.getUsername());
+        existing.setEmail(dto.getEmail());
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            existing.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        existing.setUser_role(dto.getUser_role().toUpperCase());
+
+        User updated = userRepo.save(existing);
+
+        return mapToDTO(updated);
+    }
+
+    // Update as required
+    @Override
+    public UserDTO patchUser(Long id, UserDTO dto) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
+
+        if ("ADMIN".equalsIgnoreCase(dto.getUser_role())) {
+            throw new InvalidCredentialsException("Cannot upgrade user to ADMIN without admin key!");
+        }
+
+        user.setUser_role(dto.getUser_role().toUpperCase());
+        User updated = userRepo.save(user);
+
+        return mapToDTO(updated);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
+        userRepo.delete(user);
+    }
+
+    private UserDTO mapToDTO(User user) {
+        if (user instanceof Admin) {
+            return mapper.map(user, AdminDTO.class);
+        } else if (user instanceof Coach) {
+            return mapper.map(user, CoachDTO.class);
+        } else if (user instanceof Player) {
+            return mapper.map(user, PlayerDTO.class);
+        }
+        return mapper.map(user, UserDTO.class);
     }
 }
