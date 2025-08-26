@@ -52,6 +52,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found with email " + email));
+        return mapToDTO(user);
+    }
+
+    @Override
     public UserDTO saveUser(UserDTO dto) {
         System.out.println("------------------- Inside UserServiceImpl: saveUser -------------------");
         System.out.println(dto);

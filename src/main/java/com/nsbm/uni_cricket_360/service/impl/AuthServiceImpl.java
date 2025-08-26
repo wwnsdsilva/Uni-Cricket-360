@@ -35,11 +35,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponseUtil login(LoginDTO req) {
-        User user = userRepo.findByEmail(req.getEmail());
+        User user = userRepo.findByEmail(req.getEmail()).orElseThrow(() -> new NotFoundException("User not found. Please check your email."));
 
-        if (user == null) {
+        /*if (user == null) {
             throw new NotFoundException("User not found. Please check your email.");
-        }
+        }*/
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid password. Please check your password.");

@@ -40,6 +40,17 @@ public class UserController {
         );
     }
 
+    @GetMapping(path = "/email", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseUtil> searchUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(
+                new ResponseUtil(
+                        200,
+                        "User fetched successfully!",
+                        userService.getUserByEmail(email)
+                )
+        );
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseUtil> saveUser(@ModelAttribute UserDTO dto) {

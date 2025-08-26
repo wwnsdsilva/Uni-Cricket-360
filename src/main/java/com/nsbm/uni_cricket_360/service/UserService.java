@@ -9,6 +9,8 @@ public interface UserService {
 
     UserDTO getUserById(Long id);
 
+    UserDTO getUserByEmail(String email);
+
     UserDTO saveUser(UserDTO dto);
 
     UserDTO updateUser(Long id, UserDTO dto);
