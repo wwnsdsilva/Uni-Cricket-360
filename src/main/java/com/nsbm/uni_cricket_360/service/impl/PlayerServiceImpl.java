@@ -1,6 +1,7 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
+import com.nsbm.uni_cricket_360.dto.PlayerUpdateDTO;
 import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.entity.Team;
 import com.nsbm.uni_cricket_360.enums.PlayerRole;
@@ -9,6 +10,7 @@ import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.PlayerRepo;
 import com.nsbm.uni_cricket_360.repository.TeamRepo;
 import com.nsbm.uni_cricket_360.service.PlayerService;
+import com.nsbm.uni_cricket_360.util.UploadImageUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -42,6 +41,9 @@ public class PlayerServiceImpl implements PlayerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UploadImageUtil uploadImageUtil;
+
     @Value("${player.upload-dir}")
     private String uploadDir;
 
@@ -52,12 +54,129 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Player getPlayerById(Long id) {
-        return playerRepo.findById(id)
+    public PlayerDTO getPlayerById(Long id) {
+        Player player = playerRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+        return mapper.map(player, PlayerDTO.class);
     }
 
     @Override
+    public PlayerDTO savePlayer(PlayerDTO dto, MultipartFile imageFile) {
+        try {
+            Player player = mapper.map(dto, Player.class);
+
+            // Fetch actual team from DB to avoid null fields
+            if (dto.getTeam() != null && dto.getTeam().getId() != null) {
+                Team team = teamRepo.findById(dto.getTeam().getId()).orElseThrow(() -> new NotFoundException("Team not found with id: " + dto.getTeam().getId()));
+                player.setTeam(team);
+            }
+
+            // Save image if provided
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String imageUrl = savePlayerImage(imageFile);
+                player.setImage_url(imageUrl);
+            }
+
+            //Hash password before saving
+            player.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+            Player saved = playerRepo.save(player);
+            return mapper.map(saved, PlayerDTO.class);
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to save existingPlayer: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public PlayerDTO updatePlayer(Long id, PlayerUpdateDTO dto, MultipartFile imageFile) {
+        Player existingPlayer = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+
+        // Fetch actual team from DB to avoid null fields
+        if (dto.getTeam() != null && dto.getTeam().getId() != null) {
+            Team team = teamRepo.findById(dto.getTeam().getId()).orElseThrow(() -> new NotFoundException("Team not found with id: " + dto.getTeam().getId()));
+            existingPlayer.setTeam(team);
+        }
+
+        // Update fields (keep existingPlayer values if null in dto)
+        if (dto.getFirst_name() != null) existingPlayer.setFirst_name(dto.getFirst_name());
+        if (dto.getLast_name() != null) existingPlayer.setLast_name(dto.getLast_name());
+        if (dto.getDob() != null) existingPlayer.setDob(dto.getDob());
+        if (dto.getAge() != 0) existingPlayer.setAge(dto.getAge());
+        if (dto.getContact() != null) existingPlayer.setContact(dto.getContact());
+        if (dto.getPlayer_role() != null) existingPlayer.setPlayer_role(dto.getPlayer_role());
+
+        String oldImage = null;
+        String newImageUrl;
+
+        // Handle image replacement if new image is provided
+        if (imageFile != null && !imageFile.isEmpty()) {
+            oldImage = existingPlayer.getImage_url();
+            newImageUrl = savePlayerImage(imageFile);
+            existingPlayer.setImage_url(newImageUrl);
+        }
+
+        Player updated = playerRepo.save(existingPlayer);
+
+        // Delete old image file
+        deleteOldImageFile(existingPlayer.getImage_url());
+
+        return mapper.map(updated, PlayerDTO.class);
+    }
+
+    @Override
+    public PlayerDTO updatePlayerImage(Long id, MultipartFile imageFile) {
+        Player existingPlayer = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+
+        String oldImage = existingPlayer.getImage_url();
+        String newImageUrl = savePlayerImage(imageFile);
+        existingPlayer.setImage_url(newImageUrl);
+
+        Player updated = playerRepo.save(existingPlayer);
+
+        // Delete old image
+        deleteOldImageFile(existingPlayer.getImage_url());
+
+        return mapper.map(updated, PlayerDTO.class);
+    }
+
+    @Override
+    public PlayerDTO updatePlayerRole(Long id, PlayerRole newRole) {
+        Player player = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+        player.setPlayer_role(newRole);
+//        if (newRole != null)  player.setPlayer_role(newRole);
+        return mapper.map(playerRepo.save(player), PlayerDTO.class);
+    }
+
+    @Override
+    public void deletePlayer(Long id) {
+        Player player = playerRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
+
+        // Delete image file if exists
+        deleteOldImageFile(player.getImage_url());
+
+        playerRepo.delete(player);
+    }
+
+    private String savePlayerImage(MultipartFile imageFile) {
+        return uploadImageUtil.saveImage(uploadDir, imageFile);
+    }
+
+    private void deleteOldImageFile(String oldImageUrl){
+        if (oldImageUrl != null) {
+            try {
+                Files.deleteIfExists(Paths.get(oldImageUrl));
+            } catch (IOException e) {
+                throw new ImageFileException("Failed to delete event image: " + e.getMessage());
+            }
+        }
+    }
+
+    //    @Override
     public PlayerDTO savePlayer(PlayerDTO dto) {
         Player player = mapper.map(dto, Player.class);
 
@@ -75,60 +194,20 @@ public class PlayerServiceImpl implements PlayerService {
 
     }
 
-    @Override
-    public String savePlayerImage(MultipartFile imageFile) {
-        try {
-            Path uploadPath = Paths.get(uploadDir);
-
-            // Create directories if they don't exist
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // Generate a unique filename
-            String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(imageFile.getOriginalFilename());
-            Path filePath = uploadPath.resolve(fileName);
-
-            // Save the file
-            imageFile.transferTo(filePath.toFile());
-
-            // Return path (can also return relative URL)
-            return filePath.toString();
-
-        } catch (IOException e) {
-            throw new ImageFileException("Failed to store image file: " + e.getMessage());
-        }
-    }
-
-    @Override
+    //    @Override
     public PlayerDTO updatePlayer(PlayerDTO dto) {
-        Player existing = playerRepo.findById(dto.getId())
+        Player existingPlayer = playerRepo.findById(dto.getId())
                 .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getId()));
 
-        existing.setFirst_name(dto.getFirst_name());
-        existing.setLast_name(dto.getLast_name());
-        existing.setDob(dto.getDob());
-        existing.setAge(dto.getAge());
-        existing.setContact(dto.getContact());
-        existing.setPlayer_role(dto.getPlayer_role());
-        existing.setImage_url(dto.getImage_url()); // update only if new image is provided
+        existingPlayer.setFirst_name(dto.getFirst_name());
+        existingPlayer.setLast_name(dto.getLast_name());
+        existingPlayer.setDob(dto.getDob());
+        existingPlayer.setAge(dto.getAge());
+        existingPlayer.setContact(dto.getContact());
+        existingPlayer.setPlayer_role(dto.getPlayer_role());
+        existingPlayer.setImage_url(dto.getImage_url()); // update only if new image is provided
 
-        Player updated = playerRepo.save(existing);
+        Player updated = playerRepo.save(existingPlayer);
         return mapper.map(updated, PlayerDTO.class);
-    }
-
-    @Override
-    public Player updatePlayerRole(Long id, PlayerRole newRole) {
-        Player player = playerRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
-        player.setPlayer_role(newRole);
-        return playerRepo.save(player);
-    }
-
-    @Override
-    public void deletePlayer(Long id) {
-        Player player = playerRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Player not found with id: " + id));
-        playerRepo.delete(player);
     }
 }

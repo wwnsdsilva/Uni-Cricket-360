@@ -1,6 +1,8 @@
 package com.nsbm.uni_cricket_360.controller;
 
+import com.nsbm.uni_cricket_360.dto.EventDTO;
 import com.nsbm.uni_cricket_360.dto.PlayerDTO;
+import com.nsbm.uni_cricket_360.dto.PlayerUpdateDTO;
 import com.nsbm.uni_cricket_360.dto.UserDTO;
 import com.nsbm.uni_cricket_360.entity.Player;
 import com.nsbm.uni_cricket_360.enums.PlayerRole;
@@ -38,7 +40,7 @@ public class PlayerController {
         );
     }
 
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public ResponseEntity<ResponseUtil> getPlayerById(@PathVariable Long id) {
         try {
             Player player = playerService.getPlayerById(id);
@@ -47,10 +49,20 @@ public class PlayerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseUtil(404, ex.getMessage(), null));
         }
+    }*/
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil searchPlayerById(@PathVariable Long id) {
+        return new ResponseUtil(
+                200,
+                "Player fetched successfully!",
+                playerService.getPlayerById(id)
+        );
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseUtil> savePlayer(
+   /* @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseUtil> savePlayerr(
             @Valid @RequestPart("player") PlayerDTO dto,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
 
@@ -76,9 +88,22 @@ public class PlayerController {
                         playerService.savePlayer(dto)
                 )
         );
+    }*/
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil savePlayer(
+            @Valid @RequestPart("player") PlayerDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+
+        return new ResponseUtil(
+                201,
+                "Player registered successfully..!",
+                playerService.savePlayer(dto, imageFile)
+        );
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   /* @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseUtil> updatePlayer(
             @PathVariable Long id,
             @Valid @RequestPart("player") PlayerDTO dto,
@@ -109,6 +134,33 @@ public class PlayerController {
                         playerService.updatePlayer(dto)
                 )
         );
+    }*/
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil updatePlayer(
+            @PathVariable Long id,
+            @Valid @RequestPart("player") PlayerUpdateDTO dto,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+
+        return new ResponseUtil(
+                200,
+                "Player updated successfully..!",
+                playerService.updatePlayer(id, dto, imageFile)
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil updateEventImage(
+            @PathVariable Long id,
+            @RequestPart("image") MultipartFile imageFile) {
+
+        return  new ResponseUtil(
+                200, "" +
+                "Player image updated successfully..!",
+                playerService.updatePlayerImage(id, imageFile)
+        );
     }
 
     @PatchMapping("/{id}/role")
@@ -134,23 +186,23 @@ public class PlayerController {
         }
 
         try {
-            Player updatedPlayer = playerService.updatePlayerRole(id, newRole);
-            return ResponseEntity.ok(new ResponseUtil(200, "Player role updated successfully!", updatedPlayer));
+            PlayerDTO playerDTO = playerService.updatePlayerRole(id, newRole);
+            return ResponseEntity.ok(new ResponseUtil(200, "Player role updated successfully!", playerDTO));
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseUtil(404, ex.getMessage(), null));
         }
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseUtil> deletePlayer(@PathVariable Long id) {
-        try {
-            playerService.deletePlayer(id);
-            return ResponseEntity.ok(new ResponseUtil(200, "Player deleted successfully!", null));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseUtil(404, ex.getMessage(), null));
-        }
+    public ResponseUtil deletePlayer(@PathVariable Long id) {
+        playerService.deletePlayer(id);
+        return new ResponseUtil(
+                200,
+                "Player deleted successfully..!",
+                null)
+        ;
     }
 
 }

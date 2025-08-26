@@ -9,6 +9,7 @@ import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.EventRepo;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
 import com.nsbm.uni_cricket_360.service.EventService;
+import com.nsbm.uni_cricket_360.util.UploadImageUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private UploadImageUtil uploadImageUtil;
 
     @Value("${event.upload-dir}")
     private String uploadDir;
@@ -102,13 +106,7 @@ public class EventServiceImpl implements EventService {
         Event updated = eventRepo.save(event);
 
         // Delete old image file
-        if (oldImage != null) {
-            try {
-                Files.deleteIfExists(Paths.get(oldImage));
-            } catch (IOException e) {
-                throw new ImageFileException("Failed to delete old image: " + e.getMessage());
-            }
-        }
+        deleteOldImageFile(event.getImage_url());
 
         return mapper.map(updated, EventDTO.class);
     }
@@ -125,13 +123,7 @@ public class EventServiceImpl implements EventService {
         Event updated = eventRepo.save(event);
 
         // Delete old image
-        if (oldImage != null) {
-            try {
-                Files.deleteIfExists(Paths.get(oldImage));
-            } catch (IOException e) {
-                throw new ImageFileException("Failed to delete old image: " + e.getMessage());
-            }
-        }
+        deleteOldImageFile(event.getImage_url());
 
         return mapper.map(updated, EventDTO.class);
     }
@@ -142,35 +134,23 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Event not found with id: " + id));
 
         // Delete image file if exists
-        if (event.getImage_url() != null) {
-            try {
-                Files.deleteIfExists(Paths.get(event.getImage_url()));
-            } catch (IOException e) {
-                throw new ImageFileException("Failed to delete event image: " + e.getMessage());
-            }
-        }
+        deleteOldImageFile(event.getImage_url());
 
         // Delete event from DB
         eventRepo.delete(event);
     }
 
     private String saveEventImage(MultipartFile imageFile) {
-        try {
-            Path uploadPath = Paths.get(uploadDir);
+        return uploadImageUtil.saveImage(uploadDir, imageFile);
+    }
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+    private void deleteOldImageFile(String oldImageUrl){
+        if (oldImageUrl != null) {
+            try {
+                Files.deleteIfExists(Paths.get(oldImageUrl));
+            } catch (IOException e) {
+                throw new ImageFileException("Failed to delete event image: " + e.getMessage());
             }
-
-            String fileName = UUID.randomUUID() + "_" + StringUtils.cleanPath(imageFile.getOriginalFilename());
-            Path filePath = uploadPath.resolve(fileName);
-
-            imageFile.transferTo(filePath.toFile());
-
-            return filePath.toString();
-
-        } catch (IOException e) {
-            throw new ImageFileException("Failed to store image file: " + e.getMessage());
         }
     }
 }

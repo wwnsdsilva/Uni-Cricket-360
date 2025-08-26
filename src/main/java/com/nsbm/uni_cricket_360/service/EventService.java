@@ -14,7 +14,7 @@ public interface EventService {
 
     EventDTO updateEvent(Long id, EventDTO dto, MultipartFile imageFile);
 
-    void deleteEvent(Long id);
-
     EventDTO updateEventImage(Long id, MultipartFile imageFile);
+
+    void deleteEvent(Long id);
 }
