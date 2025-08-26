@@ -19,14 +19,13 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseUtil> getAllCustomers() {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseUtil(
-                        200,
-                        "OK",
-                        userService.getAllUsers()
-                )
+    public ResponseUtil getAllUsers() {
+        return new ResponseUtil(
+                200,
+                "OK",
+                userService.getAllUsers()
         );
     }
 

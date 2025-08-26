@@ -17,4 +17,9 @@ public class TeamDTO {
     public TeamDTO(Long id) {
         this.id = id;
     }
+
+    public TeamDTO(String team_name, String venue) {
+        this.team_name = team_name;
+        this.venue = venue;
+    }
 }

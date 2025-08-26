@@ -17,14 +17,23 @@ public class TeamContoller {
     @Autowired
     TeamService teamService;
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseUtil> getAllTeams() {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseUtil(
-                        200,
-                        "OK",
-                        teamService.getAllTeams()
-                )
+    public ResponseUtil getAllTeams() {
+        return new ResponseUtil(
+                200,
+                "OK",
+                teamService.getAllTeams()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil searchTeamById(@PathVariable Long id) {
+        return new ResponseUtil(
+                200,
+                "Team fetched successfully!",
+                teamService.getTeamById(id)
         );
     }
 
@@ -41,4 +50,26 @@ public class TeamContoller {
                 )
         );
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil updateTeam(@PathVariable Long id, @RequestBody TeamDTO dto) {
+        return new ResponseUtil(
+                200,
+                "Team updated successfully!",
+                teamService.updateTeam(id, dto)
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil deleteTeam(@PathVariable Long id) {
+        teamService.deleteTeam(id);
+        return new ResponseUtil(
+                200,
+                "Team deleted successfully!",
+                null
+        );
+    }
+
 }
