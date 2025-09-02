@@ -106,7 +106,7 @@ public class EventServiceImpl implements EventService {
         Event updated = eventRepo.save(event);
 
         // Delete old image file
-        deleteOldImageFile(event.getImage_url());
+        deleteOldImageFile(oldImage);
 
         return mapper.map(updated, EventDTO.class);
     }
@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
         Event updated = eventRepo.save(event);
 
         // Delete old image
-        deleteOldImageFile(event.getImage_url());
+        deleteOldImageFile(oldImage);
 
         return mapper.map(updated, EventDTO.class);
     }
