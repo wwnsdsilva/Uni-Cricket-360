@@ -1,14 +1,11 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
-import com.nsbm.uni_cricket_360.dto.EventDTO;
 import com.nsbm.uni_cricket_360.dto.MatchDTO;
 import com.nsbm.uni_cricket_360.entity.Admin;
-import com.nsbm.uni_cricket_360.entity.Event;
 import com.nsbm.uni_cricket_360.entity.Match;
 import com.nsbm.uni_cricket_360.entity.Team;
 import com.nsbm.uni_cricket_360.exception.ImageFileException;
 import com.nsbm.uni_cricket_360.exception.NotFoundException;
-import com.nsbm.uni_cricket_360.repository.EventRepo;
 import com.nsbm.uni_cricket_360.repository.MatchRepo;
 import com.nsbm.uni_cricket_360.repository.TeamRepo;
 import com.nsbm.uni_cricket_360.repository.UserRepo;
@@ -32,13 +29,13 @@ import java.util.List;
 public class MatchServiceImpl implements MatchService {
 
     @Autowired
-    MatchRepo matchRepo;
+    private MatchRepo matchRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private TeamRepo teamRepo;
-
-    @Autowired
-    UserRepo userRepo;
 
     @Autowired
     private ModelMapper mapper;
@@ -51,7 +48,8 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public List<MatchDTO> getAllMatches() {
-        return mapper.map(matchRepo.findAll(), new TypeToken<List<MatchDTO>>() {}.getType());
+        return mapper.map(matchRepo.findAll(), new TypeToken<List<MatchDTO>>() {
+        }.getType());
     }
 
     @Override
@@ -183,7 +181,7 @@ public class MatchServiceImpl implements MatchService {
         return uploadImageUtil.saveImage(uploadDir, imageFile);
     }
 
-    private void deleteOldImageFile(String oldImageUrl){
+    private void deleteOldImageFile(String oldImageUrl) {
         if (oldImageUrl != null) {
             try {
                 Files.deleteIfExists(Paths.get(oldImageUrl));
