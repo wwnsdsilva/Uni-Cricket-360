@@ -1,0 +1,229 @@
+package com.nsbm.uni_cricket_360.service.impl;
+
+import com.nsbm.uni_cricket_360.dto.BattingAverageDTO;
+import com.nsbm.uni_cricket_360.dto.BoundaryPercentageDTO;
+import com.nsbm.uni_cricket_360.dto.StrikeRateDTO;
+import com.nsbm.uni_cricket_360.entity.BattingPerformance;
+import com.nsbm.uni_cricket_360.enums.DismissalType;
+import com.nsbm.uni_cricket_360.repository.*;
+import com.nsbm.uni_cricket_360.service.PerformanceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+
+@Service
+@Transactional
+public class PerformanceServiceImpl implements PerformanceService {
+
+    @Autowired
+    BattingPerformanceRepo battingRepo;
+
+    @Autowired
+    BowlingPerformanceRepo bowlingRepo;
+
+    @Autowired
+    FieldingPerformanceRepo fieldingRepo;
+
+    @Autowired
+    FitnessTestRepo fitnessRepo;
+
+    @Autowired
+    InjuryRepo injuryRepo;
+
+    @Autowired
+    MatchRepo matchRepo;
+
+    @Autowired
+    AttendanceRepo attendanceRepo;
+
+    // ---------------- Batting ----------------
+    @Override
+    public BattingAverageDTO getBattingAverage(Long playerId) {
+
+        // Fetch all batting performances for the player
+        List<BattingPerformance> records = battingRepo.findByPlayer_Id(playerId);
+
+        BattingAverageDTO battingAverageDTO = new BattingAverageDTO();
+
+        // Sum total runs
+        int totalRuns = records.stream()
+                .mapToInt(BattingPerformance::getRuns)
+                .sum();
+        battingAverageDTO.setTotalRuns(totalRuns);
+
+        // Count dismissals (dismissal_type != null)
+        long dismissals = records.stream()
+                .filter(bp -> bp.getDismissal_type() != DismissalType.NOTOUT)
+                .count();
+        battingAverageDTO.setDismissals(dismissals);
+
+        // Calculate batting average
+        if (dismissals > 0) {
+            battingAverageDTO.setBattingAverage((double) totalRuns / dismissals);
+            return battingAverageDTO;
+        } else {
+            return null; // "N/A" if never dismissed
+        }
+    }
+
+    @Override
+    public StrikeRateDTO getStrikeRate(Long playerId) {
+
+        // Fetch all batting performances for the player
+        List<BattingPerformance> records = battingRepo.findByPlayer_Id(playerId);
+
+        StrikeRateDTO strikeRateDTO = new StrikeRateDTO();
+
+        // Sum total runs and total balls faced across all innings
+        int totalRuns = records.stream()
+                .mapToInt(BattingPerformance::getRuns)
+                .sum();
+        strikeRateDTO.setTotalRuns(totalRuns);
+
+        int totalBalls = records.stream()
+                .mapToInt(BattingPerformance::getBalls_faced)
+                .sum();
+        strikeRateDTO.setTotalBalls(totalBalls);
+
+        // Calculate strike rate
+        double strikeRate = totalBalls > 0 ? ((double) totalRuns / totalBalls) * 100 : 0.0;
+        strikeRateDTO.setStrikeRate(strikeRate);
+        return strikeRateDTO;
+    }
+
+    @Override
+    public BoundaryPercentageDTO getBoundaryPercentage(Long playerId) {
+        List<BattingPerformance> records = battingRepo.findByPlayer_Id(playerId);
+
+        BoundaryPercentageDTO boundaryPercentageDTO = new BoundaryPercentageDTO();
+
+        // Sum total runs
+        int totalRuns = records.stream()
+                .mapToInt(BattingPerformance::getRuns)
+                .sum();
+        boundaryPercentageDTO.setTotalRuns(totalRuns);
+
+        // Sum boundary runs (4s and 6s)
+        int boundaryRuns = records.stream()
+                .mapToInt(bp -> bp.getFours() * 4 + bp.getSixes() * 6)
+                .sum();
+        boundaryPercentageDTO.setBoundaryRuns(boundaryRuns);
+
+        // Calculate boundary percentage
+        // Edge Case: If total_runs = 0, set percentage = 0 to avoid division by zero.
+
+        double boundaryPerc = totalRuns > 0 ? (boundaryRuns * 100.0) / totalRuns : 0.0;
+        boundaryPercentageDTO.setBoundaryPercentage(boundaryPerc);
+        return boundaryPercentageDTO;
+    }
+
+    @Override
+    public Map<DismissalType, Double> getDismissalAnalysis(Long playerId) {
+        List<BattingPerformance> records = battingRepo.findByPlayer_Id(playerId);
+
+        // Filter out not-out innings
+        Map<DismissalType, Long> counts = records.stream()
+                .filter(bp -> bp.getDismissal_type() != DismissalType.NOTOUT)
+                .collect(Collectors.groupingBy(BattingPerformance::getDismissal_type, Collectors.counting()));
+
+        // Calculate total dismissals
+        long totalDismissals = counts.values().stream().mapToLong(Long::longValue).sum();
+
+        // Calculate percentage per dismissal type
+        Map<DismissalType, Double> percentages = new HashMap<>();
+        counts.forEach((type, count) -> percentages.put(type, (count * 100.0) / totalDismissals));
+
+        return percentages;
+    }
+
+    // ---------------- Bowling ----------------
+    /*@Override
+    public Double getBowlingAverage(Long playerId) {
+        List<BowlingPerformance> records = bowlingRepo.findByPlayer_Id(playerId);
+        int runsConceded = records.stream().mapToInt(BowlingPerformance::getRuns_conceded).sum();
+        int wickets = records.stream().mapToInt(BowlingPerformance::getWickets).sum();
+        return wickets > 0 ? (double) runsConceded / wickets : null;
+    }
+
+    @Override
+    public Double getEconomyRate(Long playerId) {
+        List<BowlingPerformance> records = bowlingRepo.findByPlayer_Id(playerId);
+        int runsConceded = records.stream().mapToInt(BowlingPerformance::getRuns_conceded).sum();
+        double overs = records.stream().mapToDouble(bp -> convertOversToDecimal(bp.getOvers())).sum();
+        return overs > 0 ? runsConceded / overs : 0.0;
+    }
+
+    // ---------------- Fielding ----------------
+    @Override
+    public Integer getFieldingContribution(Long playerId) {
+        List<FieldingPerformance> records = fieldingRepo.findByPlayer_Id(playerId);
+        return records.stream().mapToInt(fp -> fp.getCatches() + fp.getRun_outs() + fp.getStumpings()).sum();
+    }
+
+    // ---------------- Fitness ----------------
+    @Override
+    public Double getAverageSprintTime(Long playerId) {
+        List<FitnessTest> tests = fitnessRepo.findByPlayer_Id(playerId);
+        return tests.stream().mapToDouble(FitnessTest::getSprint_time).average().orElse(0.0);
+    }
+
+    @Override
+    public Double getAverageBeepLevel(Long playerId) {
+        List<FitnessTest> tests = fitnessRepo.findByPlayer_Id(playerId);
+        return tests.stream().mapToDouble(FitnessTest::getBeep_level).average().orElse(0.0);
+    }
+
+    @Override
+    public Map<String, Object> getInjuryImpact(Long playerId) {
+        List<Injury> injuries = injuryRepo.findByPlayer_Id(playerId);
+        int totalDays = injuries.stream().mapToInt(Injury::getRecovery_days).sum();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("total_injuries", injuries.size());
+        response.put("days_unavailable", totalDays);
+        response.put("active_injuries", injuries.stream().filter(i -> i.getStatus().equals("Injured")).count());
+        return response;
+    }
+
+    // ---------------- Team ----------------
+    @Override
+    public Double getWinLossRatio(Long teamId) {
+        var matches = matchRepo.findByTeam(teamId);
+        long wins = matches.stream().filter(m -> "WIN".equalsIgnoreCase(m.getResult())).count();
+        long losses = matches.stream().filter(m -> "LOSS".equalsIgnoreCase(m.getResult())).count();
+        return (wins + losses) > 0 ? (double) wins / (wins + losses) : 0.0;
+    }
+
+    @Override
+    public Double getNetRunRate(Long teamId) {
+        var matches = matchRepo.findByTeam(teamId);
+        int runsScored = matches.stream().mapToInt(Match::getRunsScored).sum();
+        int runsConceded = matches.stream().mapToInt(Match::getRunsConceded).sum();
+        double oversFaced = matches.stream().mapToDouble(m -> convertOversToDecimal(m.getOversFaced())).sum();
+        double oversBowled = matches.stream().mapToDouble(m -> convertOversToDecimal(m.getOversBowled())).sum();
+
+        double rsPerOver = oversFaced > 0 ? runsScored / oversFaced : 0;
+        double rcPerOver = oversBowled > 0 ? runsConceded / oversBowled : 0;
+        return rsPerOver - rcPerOver;
+    }
+
+    @Override
+    public Double getTrainingAttendance(Long teamId) {
+        var records = attendanceRepo.findByTeamId(teamId);
+        long attended = records.stream().filter(a -> a.getStatus() == AttendanceStatus.PRESENT).count();
+        return records.size() > 0 ? (attended * 100.0) / records.size() : 0.0;
+    }*/
+
+    // ---------------- Helper ----------------
+    private double convertOversToDecimal(double overs) {
+        int whole = (int) overs;
+        int balls = (int) Math.round((overs - whole) * 10); // e.g., 25.3 -> 3 balls
+        return whole + (balls / 6.0);
+    }
+}

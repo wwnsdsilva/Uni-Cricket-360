@@ -24,4 +24,9 @@ public class TrainingSession {
 
     private String description;
     private LocalDate date;
+
+    /* // If want team-wide attendance
+    @ManyToOne
+    @JoinColumn(name = "team_id", referencedColumnName = "id", nullable = false)
+    private Team team;*/
 }
