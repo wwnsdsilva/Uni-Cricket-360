@@ -134,12 +134,18 @@ public class PerformanceController {
         );
     }
 
-    /*@GetMapping("/fitness/injuries/{playerId}")
-    public ResponseEntity<ResponseUtil> injuryImpact(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getInjuryImpact(playerId)));
+    // ---------------- Injury Metrics ----------------
+
+    @GetMapping("/fitness/injuries/{playerId}")
+    public ResponseUtil injuryImpact(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getInjuryImpact(playerId)
+        );
     }
 
-     // -------- Team --------
+    /* // -------- Team --------
     @GetMapping("/team/win-loss/{teamId}")
     public ResponseEntity<ResponseUtil> winLossRatio(@PathVariable Long teamId) {
         return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getWinLossRatio(teamId)));

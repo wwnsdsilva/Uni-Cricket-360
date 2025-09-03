@@ -39,10 +39,10 @@ public interface PerformanceService {
     SprintTimeAverageDTO getAverageSprintTime(Long playerId);
 
     BeepLevelAverageDTO getAverageBeepLevel(Long playerId);
-//
-//    // ---------------- Injury Metrics ----------------
-//
-//    Map<String, Object> getInjuryImpact(Long playerId);
+
+    // ---------------- Injury Metrics ----------------
+
+    InjuryImpactDTO getInjuryImpact(Long playerId);
 //
 //    // ---------------- Team ----------------
 //

@@ -293,19 +293,21 @@ public class PerformanceServiceImpl implements PerformanceService {
         return new BeepLevelAverageDTO(tests.stream().mapToDouble(FitnessTest::getBeep_level).average().orElse(0.0));
     }
 
-    /*@Override
-    public Map<String, Object> getInjuryImpact(Long playerId) {
+    // ---------------- Injury Metrics ----------------
+
+    @Override
+    public InjuryImpactDTO getInjuryImpact(Long playerId) {
         List<Injury> injuries = injuryRepo.findByPlayer_Id(playerId);
         int totalDays = injuries.stream().mapToInt(Injury::getRecovery_days).sum();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("total_injuries", injuries.size());
-        response.put("days_unavailable", totalDays);
-        response.put("active_injuries", injuries.stream().filter(i -> i.getStatus().equals("Injured")).count());
-        return response;
+        return new InjuryImpactDTO(
+                injuries.size(), // total injuries
+                totalDays,       // total unavailable days
+                injuries.stream().filter(i -> i.getStatus().toString().equals("INJURED")).count() // active injuries
+        );
     }
 
-    // ---------------- Team ----------------
+    /*// ---------------- Team ----------------
     @Override
     public Double getWinLossRatio(Long teamId) {
         var matches = matchRepo.findByTeam(teamId);
