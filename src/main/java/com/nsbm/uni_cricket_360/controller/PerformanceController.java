@@ -115,23 +115,31 @@ public class PerformanceController {
         );
     }
 
-    /*// -------- Fitness --------
+   // -------- Fitness --------
     @GetMapping("/fitness/sprint-time/{playerId}")
-    public ResponseEntity<ResponseUtil> avgSprintTime(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getAverageSprintTime(playerId)));
+    public ResponseUtil avgSprintTime(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getAverageSprintTime(playerId)
+        );
     }
 
     @GetMapping("/fitness/beep-level/{playerId}")
-    public ResponseEntity<ResponseUtil> avgBeepLevel(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getAverageBeepLevel(playerId)));
+    public ResponseUtil avgBeepLevel(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getAverageBeepLevel(playerId)
+        );
     }
 
-    @GetMapping("/fitness/injuries/{playerId}")
+    /*@GetMapping("/fitness/injuries/{playerId}")
     public ResponseEntity<ResponseUtil> injuryImpact(@PathVariable Long playerId) {
         return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getInjuryImpact(playerId)));
     }
 
-    // -------- Team --------
+     // -------- Team --------
     @GetMapping("/team/win-loss/{teamId}")
     public ResponseEntity<ResponseUtil> winLossRatio(@PathVariable Long teamId) {
         return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getWinLossRatio(teamId)));

@@ -276,20 +276,24 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    /*// ---------------- Fitness ----------------
+    // ---------------- Fitness ----------------
     @Override
-    public Double getAverageSprintTime(Long playerId) {
-        List<FitnessTest> tests = fitnessRepo.findByPlayer_Id(playerId);
-        return tests.stream().mapToDouble(FitnessTest::getSprint_time).average().orElse(0.0);
+    public SprintTimeAverageDTO getAverageSprintTime(Long playerId) {
+        List<FitnessTest> tests = fitnessRepo.findByPlayer(playerId);
+        if (tests.isEmpty()) throw new NotFoundException("Fitness test records not found for player with id: " + playerId); // or 0.0 if you prefer
+        // return tests.stream().mapToDouble(FitnessTest::getSprint_time).average().orElse(0.0);
+        return new SprintTimeAverageDTO(tests.stream().mapToDouble(FitnessTest::getSprint_time).average().orElse(0.0));
+
     }
 
     @Override
-    public Double getAverageBeepLevel(Long playerId) {
-        List<FitnessTest> tests = fitnessRepo.findByPlayer_Id(playerId);
-        return tests.stream().mapToDouble(FitnessTest::getBeep_level).average().orElse(0.0);
+    public BeepLevelAverageDTO getAverageBeepLevel(Long playerId) {
+        List<FitnessTest> tests = fitnessRepo.findByPlayer(playerId);
+        if (tests.isEmpty()) throw new NotFoundException("Fitness test records not found for player with id: " + playerId); // or 0.0 if you prefer
+        return new BeepLevelAverageDTO(tests.stream().mapToDouble(FitnessTest::getBeep_level).average().orElse(0.0));
     }
 
-    @Override
+    /*@Override
     public Map<String, Object> getInjuryImpact(Long playerId) {
         List<Injury> injuries = injuryRepo.findByPlayer_Id(playerId);
         int totalDays = injuries.stream().mapToInt(Injury::getRecovery_days).sum();

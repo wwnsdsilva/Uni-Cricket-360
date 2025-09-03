@@ -1,7 +1,8 @@
 package com.nsbm.uni_cricket_360.controller;
 
 import com.nsbm.uni_cricket_360.dto.FieldingPerformanceDTO;
-import com.nsbm.uni_cricket_360.service.FieldingPerformanceService;
+import com.nsbm.uni_cricket_360.dto.FitnessTestDTO;
+import com.nsbm.uni_cricket_360.service.FitnessTestService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,59 +12,59 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/fielding-performance")
-public class FieldingPerformanceController {
+@RequestMapping("/api/v1/fitness-test")
+public class FitnessTestController {
 
     @Autowired
-    FieldingPerformanceService fieldingPerformanceService;
+    FitnessTestService fitnessTestService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil getAllFieldingPerformance() {
+    public ResponseUtil getAllFitnessTestResults() {
         return new ResponseUtil(
                 200,
                 "OK",
-                fieldingPerformanceService.getAllFieldingPerformance()
+                fitnessTestService.getAllFitnessTestResults()
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil searchFieldingPerformanceById(@PathVariable Long id) {
+    public ResponseUtil searchFitnessTestResults(@PathVariable Long id) {
         return new ResponseUtil(
                 200,
-                "Fielding performance details fetched successfully!",
-                fieldingPerformanceService.searchFieldingPerformanceById(id)
+                "Fitness test results fetched successfully!",
+                fitnessTestService.searchFitnessTestResultsByPlayer(id)
         );
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil saveFieldingPerformance(@RequestBody FieldingPerformanceDTO dto) {
+    public ResponseUtil saveFitnessTestResults(@RequestBody FitnessTestDTO dto) {
         return new ResponseUtil(
                 201,
-                "Fielding performance details saved successfully!",
-                fieldingPerformanceService.saveFieldingPerformance(dto)
+                "Fitness test results saved successfully!",
+                fitnessTestService.saveFitnessTestResults(dto)
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil updateFieldingPerformance(@PathVariable Long id, @RequestBody FieldingPerformanceDTO dto) {
+    public ResponseUtil updateFitnessTestResults(@PathVariable Long id, @RequestBody FitnessTestDTO dto) {
         return new ResponseUtil(
                 200,
-                "Fielding performance details updated successfully!",
-                fieldingPerformanceService.updateFieldingPerformance(id, dto)
+                "Fitness test results updated successfully!",
+                fitnessTestService.updateFitnessTestResults(id, dto)
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil deleteFieldingPerformance(@PathVariable Long id) {
-        fieldingPerformanceService.deleteFieldingPerformance(id);
+    public ResponseUtil deleteFitnessTestResults(@PathVariable Long id) {
+        fitnessTestService.deleteFitnessTestResults(id);
         return new ResponseUtil(
                 200,
-                "Fielding performance details deleted successfully!",
+                "Fitness test results deleted successfully!",
                 null
         );
     }

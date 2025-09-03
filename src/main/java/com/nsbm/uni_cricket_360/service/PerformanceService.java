@@ -33,12 +33,12 @@ public interface PerformanceService {
     RunOutStatsDTO getRunOutStats(Long playerId);
 
     RunOutStatsDTO getRunOutStatsPerMatch(Long playerId, Long matchId);
-//
-//    // ---------------- Fitness ----------------
-//
-//    Double getAverageSprintTime(Long playerId);
-//
-//    Double getAverageBeepLevel(Long playerId);
+
+    // ---------------- Fitness ----------------
+
+    SprintTimeAverageDTO getAverageSprintTime(Long playerId);
+
+    BeepLevelAverageDTO getAverageBeepLevel(Long playerId);
 //
 //    // ---------------- Injury Metrics ----------------
 //

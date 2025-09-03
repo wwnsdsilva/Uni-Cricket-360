@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @ToString
 @Entity
-public class FitnessTest {
+public class FitnessTest{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
