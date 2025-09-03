@@ -1,7 +1,7 @@
 package com.nsbm.uni_cricket_360.controller;
 
-import com.nsbm.uni_cricket_360.dto.TrainingSessionDTO;
-import com.nsbm.uni_cricket_360.service.TrainingSessionService;
+import com.nsbm.uni_cricket_360.dto.AttendanceDTO;
+import com.nsbm.uni_cricket_360.service.AttendanceService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,59 +10,59 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("api/v1/training-session")
-public class TrainingSessionController {
+@RequestMapping("api/v1/attendance")
+public class AttendanceController {
 
     @Autowired
-    TrainingSessionService trainingSessionService;
+    AttendanceService attendanceService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil getAllTrainingSessions() {
+    public ResponseUtil getAllAttendance() {
         return new ResponseUtil(
                 200,
                 "OK",
-                trainingSessionService.getAllTrainingSessions()
+                attendanceService.getAllAttendance()
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil searchSessionById(@PathVariable Long id) {
+    public ResponseUtil searchAttendanceById(@PathVariable Long id) {
         return new ResponseUtil(
                 200,
-                "Training session details fetched successfully!",
-                trainingSessionService.searchSessionById(id)
+                "Attendance details fetched successfully!",
+                attendanceService.searchAttendanceById(id)
         );
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil saveSession(@RequestBody TrainingSessionDTO dto) {
+    public ResponseUtil saveAttendance(@RequestBody AttendanceDTO dto) {
         return new ResponseUtil(
                 201,
-                "Training session saved successfully..!",
-                trainingSessionService.saveSession(dto)
+                "Attendance saved successfully..!",
+                attendanceService.saveAttendance(dto)
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil updateSession(@PathVariable Long id, @RequestBody TrainingSessionDTO dto) {
+    public ResponseUtil updateAttendance(@PathVariable Long id, @RequestBody AttendanceDTO dto) {
         return new ResponseUtil(
                 200,
-                "Training session updated successfully!",
-                trainingSessionService.updateSession(id, dto)
+                "Attendance updated successfully!",
+                attendanceService.updateAttendance(id, dto)
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil deleteSession(@PathVariable Long id) {
-        trainingSessionService.deleteSession(id);
+    public ResponseUtil deleteAttendance(@PathVariable Long id) {
+        attendanceService.deleteAttendance(id);
         return new ResponseUtil(
                 200,
-                "Training session deleted successfully!",
+                "Attendance deleted successfully!",
                 null
         );
     }
