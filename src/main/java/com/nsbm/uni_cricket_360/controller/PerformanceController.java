@@ -1,10 +1,10 @@
 package com.nsbm.uni_cricket_360.controller;
 
+import com.nsbm.uni_cricket_360.dto.BowlingAverageDTO;
 import com.nsbm.uni_cricket_360.service.PerformanceService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -53,18 +53,29 @@ public class PerformanceController {
                 performanceService.getDismissalAnalysis(playerId));
     }
 
-    /*// -------- Bowling --------
+    // -------- Bowling --------
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/bowling-average/{playerId}")
-    public ResponseEntity<ResponseUtil> bowlingAverage(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getBowlingAverage(playerId)));
+    public ResponseUtil bowlingAverage(@PathVariable Long playerId) {
+        BowlingAverageDTO dto = performanceService.getBowlingAverage(playerId);
+
+        if (dto.getTotalWickets() == 0) {
+            return new ResponseUtil(200, "OK", "No wickets taken - N/A");
+        }
+        return new ResponseUtil(200, "OK", dto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/economy-rate/{playerId}")
-    public ResponseEntity<ResponseUtil> economyRate(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getEconomyRate(playerId)));
+    public ResponseUtil economyRate(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getEconomyRate(playerId));
     }
 
-    // -------- Fielding --------
+    /*// -------- Fielding --------
     @GetMapping("/fielding-contribution/{playerId}")
     public ResponseEntity<ResponseUtil> fieldingContribution(@PathVariable Long playerId) {
         return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getFieldingContribution(playerId)));

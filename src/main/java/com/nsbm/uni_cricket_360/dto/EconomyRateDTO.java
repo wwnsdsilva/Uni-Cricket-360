@@ -9,12 +9,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @Data
 @ToString
-public class BowlingPerformanceDTO {
-    private Long id;
-    private InningDTO inning;
-    private PlayerDTO player;
+public class EconomyRateDTO {
+
+    private int runsConceded;
+    private int ballsBowled;
     private double overs;
-    private int balls_bowled;
-    private int runs_conceded;
-    private int wickets;
+    private double economyRate;
+
 }

@@ -1,9 +1,8 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
-import com.nsbm.uni_cricket_360.dto.BattingAverageDTO;
-import com.nsbm.uni_cricket_360.dto.BoundaryPercentageDTO;
-import com.nsbm.uni_cricket_360.dto.StrikeRateDTO;
+import com.nsbm.uni_cricket_360.dto.*;
 import com.nsbm.uni_cricket_360.entity.BattingPerformance;
+import com.nsbm.uni_cricket_360.entity.BowlingPerformance;
 import com.nsbm.uni_cricket_360.enums.DismissalType;
 import com.nsbm.uni_cricket_360.repository.*;
 import com.nsbm.uni_cricket_360.service.PerformanceService;
@@ -143,24 +142,53 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     // ---------------- Bowling ----------------
-    /*@Override
-    public Double getBowlingAverage(Long playerId) {
+    @Override
+    public BowlingAverageDTO getBowlingAverage(Long playerId) {
         List<BowlingPerformance> records = bowlingRepo.findByPlayer_Id(playerId);
-        int runsConceded = records.stream().mapToInt(BowlingPerformance::getRuns_conceded).sum();
-        int wickets = records.stream().mapToInt(BowlingPerformance::getWickets).sum();
-        return wickets > 0 ? (double) runsConceded / wickets : null;
+
+        BowlingAverageDTO bowlingAverageDTO = new BowlingAverageDTO();
+
+        int totalRunsConceded = records.stream()
+                .mapToInt(BowlingPerformance::getRuns_conceded)
+                .sum();
+        bowlingAverageDTO.setTotalRunsConceded(totalRunsConceded);
+
+        int totalWickets = records.stream()
+                .mapToInt(BowlingPerformance::getWickets)
+                .sum();
+        bowlingAverageDTO.setTotalWickets(totalWickets);
+
+        if (totalWickets > 0) {
+            bowlingAverageDTO.setBowlingAverage((double) totalRunsConceded / totalWickets);
+        } else {
+            bowlingAverageDTO.setBowlingAverage(null); // controller will handle "N/A"
+        }
+
+        return bowlingAverageDTO;
     }
 
     @Override
-    public Double getEconomyRate(Long playerId) {
+    public EconomyRateDTO getEconomyRate(Long playerId) {
         List<BowlingPerformance> records = bowlingRepo.findByPlayer_Id(playerId);
+
+        EconomyRateDTO economyRateDTO = new EconomyRateDTO();
+
         int runsConceded = records.stream().mapToInt(BowlingPerformance::getRuns_conceded).sum();
-        double overs = records.stream().mapToDouble(bp -> convertOversToDecimal(bp.getOvers())).sum();
-        return overs > 0 ? runsConceded / overs : 0.0;
+        int ballsBowled = records.stream().mapToInt(BowlingPerformance::getBalls_bowled).sum();
+
+        double overs = ballsBowled / 6 + (ballsBowled % 6) / 6.0; // balls_bowled -> overs(decimal)
+        double economyRate = overs > 0 ? runsConceded / overs : 0.0;
+
+        economyRateDTO.setRunsConceded(runsConceded);
+        economyRateDTO.setBallsBowled(ballsBowled);
+        economyRateDTO.setOvers(overs);
+        economyRateDTO.setEconomyRate(economyRate);
+
+        return economyRateDTO;
     }
 
     // ---------------- Fielding ----------------
-    @Override
+    /* @Override
     public Integer getFieldingContribution(Long playerId) {
         List<FieldingPerformance> records = fieldingRepo.findByPlayer_Id(playerId);
         return records.stream().mapToInt(fp -> fp.getCatches() + fp.getRun_outs() + fp.getStumpings()).sum();

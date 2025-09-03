@@ -1,7 +1,7 @@
 package com.nsbm.uni_cricket_360.controller;
 
-import com.nsbm.uni_cricket_360.dto.BattingPerformanceDTO;
-import com.nsbm.uni_cricket_360.service.BattingPerformanceService;
+import com.nsbm.uni_cricket_360.dto.BowlingPerformanceDTO;
+import com.nsbm.uni_cricket_360.service.BowlingPerformanceService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,61 +11,61 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/batting-performance")
-public class BattingPerformanceController {
+@RequestMapping("/api/v1/bowling-performance")
+public class BowlingPerformanceController {
 
     @Autowired
-    BattingPerformanceService battingPerformanceService;
+    BowlingPerformanceService bowlingPerformanceService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil getAllBattingPerformance() {
+    public ResponseUtil getAllBowlingPerformance() {
         return new ResponseUtil(
                 200,
                 "OK",
-                battingPerformanceService.getAllBattingPerformance()
+                bowlingPerformanceService.getAllBowlingPerformance()
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil searchBattingPerformanceById(@PathVariable Long id) {
+    public ResponseUtil searchBowlingPerformanceById(@PathVariable Long id) {
         return new ResponseUtil(
                 200,
-                "Batting performance details fetched successfully!",
-                battingPerformanceService.searchBattingPerformanceById(id)
+                "Bowling performance details fetched successfully!",
+                bowlingPerformanceService.searchBowlingPerformanceById(id)
         );
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseUtil> saveBattingPerformance(@RequestBody BattingPerformanceDTO dto) {
+    public ResponseEntity<ResponseUtil> saveBowlingPerformance(@RequestBody BowlingPerformanceDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseUtil(
                         201,
-                        "Batting performance details saved successfully!",
-                        battingPerformanceService.saveBattingPerformance(dto)
+                        "Bowling performance details saved successfully!",
+                        bowlingPerformanceService.saveBowlingPerformance(dto)
                 )
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil updateBattingPerformance(@PathVariable Long id, @RequestBody BattingPerformanceDTO dto) {
+    public ResponseUtil updateBowlingPerformance(@PathVariable Long id, @RequestBody BowlingPerformanceDTO dto) {
         return new ResponseUtil(
                 200,
-                "Batting performance details updated successfully!",
-                battingPerformanceService.updateBattingPerformance(id, dto)
+                "Bowling performance details updated successfully!",
+                bowlingPerformanceService.updateBowlingPerformance(id, dto)
         );
     }
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil deleteBattingPerformance(@PathVariable Long id) {
-        battingPerformanceService.deleteBattingPerformance(id);
+    public ResponseUtil deleteBowlingPerformance(@PathVariable Long id) {
+        bowlingPerformanceService.deleteBowlingPerformance(id);
         return new ResponseUtil(
                 200,
-                "Batting performance details deleted successfully!",
+                "Bowling performance details deleted successfully!",
                 null
         );
     }

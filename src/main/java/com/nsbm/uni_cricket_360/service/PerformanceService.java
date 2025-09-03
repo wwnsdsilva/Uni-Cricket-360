@@ -1,8 +1,6 @@
 package com.nsbm.uni_cricket_360.service;
 
-import com.nsbm.uni_cricket_360.dto.BattingAverageDTO;
-import com.nsbm.uni_cricket_360.dto.BoundaryPercentageDTO;
-import com.nsbm.uni_cricket_360.dto.StrikeRateDTO;
+import com.nsbm.uni_cricket_360.dto.*;
 import com.nsbm.uni_cricket_360.enums.DismissalType;
 
 import java.util.Map;
@@ -18,12 +16,12 @@ public interface PerformanceService {
     BoundaryPercentageDTO getBoundaryPercentage(Long playerId);
 
     Map<DismissalType, Double> getDismissalAnalysis(Long playerId);
-//
-//    // ---------------- Bowling ----------------
-//
-//    Double getBowlingAverage(Long playerId);
-//
-//    Double getEconomyRate(Long playerId);
+
+    // ---------------- Bowling ----------------
+
+    BowlingAverageDTO getBowlingAverage(Long playerId);
+
+    EconomyRateDTO getEconomyRate(Long playerId);
 //
 //    // ---------------- Fielding ----------------
 //

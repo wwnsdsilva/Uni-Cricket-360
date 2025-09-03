@@ -22,13 +22,13 @@ import java.util.List;
 public class BattingPerformanceServiceImpl implements BattingPerformanceService {
 
     @Autowired
-    BattingPerformanceRepo battingPerformanceRepo;
+    private BattingPerformanceRepo battingPerformanceRepo;
 
     @Autowired
-    PlayerRepo playerRepo;
+    private PlayerRepo playerRepo;
 
     @Autowired
-    InningRepo inningRepo;
+    private InningRepo inningRepo;
 
     @Autowired
     private ModelMapper mapper;
@@ -94,7 +94,7 @@ public class BattingPerformanceServiceImpl implements BattingPerformanceService 
 
     @Override
     public void deleteBattingPerformance(Long id) {
-        BattingPerformance battingPerformance = battingPerformanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Batting performance deatils not found with id " + id));
+        BattingPerformance battingPerformance = battingPerformanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Batting performance details not found with id " + id));
         battingPerformanceRepo.delete(battingPerformance);
     }
 }
