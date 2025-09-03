@@ -75,13 +75,47 @@ public class PerformanceController {
                 performanceService.getEconomyRate(playerId));
     }
 
-    /*// -------- Fielding --------
-    @GetMapping("/fielding-contribution/{playerId}")
-    public ResponseEntity<ResponseUtil> fieldingContribution(@PathVariable Long playerId) {
-        return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getFieldingContribution(playerId)));
+    // -------- Fielding --------
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/fielding-stats/{playerId}")
+    public ResponseUtil fieldingStats(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getFieldingStats(playerId));
     }
 
-    // -------- Fitness --------
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/fielding-stats/{playerId}/{matchId}")
+    public ResponseUtil fieldingStatsPerMatch(@PathVariable Long playerId, @PathVariable Long matchId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.fieldingStatsPerMatch(playerId, matchId));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/run-out-stats/{playerId}")
+    public ResponseUtil runOutStats(@PathVariable Long playerId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getRunOutStats(playerId)
+        );
+    }
+
+    @GetMapping("/run-out-stats/{playerId}/{matchId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseUtil runOutStatsPerMatch(@PathVariable Long playerId, @PathVariable Long matchId) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                performanceService.getRunOutStatsPerMatch(playerId, matchId)
+        );
+    }
+
+    /*// -------- Fitness --------
     @GetMapping("/fitness/sprint-time/{playerId}")
     public ResponseEntity<ResponseUtil> avgSprintTime(@PathVariable Long playerId) {
         return ResponseEntity.ok(new ResponseUtil(200, "OK", performanceService.getAverageSprintTime(playerId)));

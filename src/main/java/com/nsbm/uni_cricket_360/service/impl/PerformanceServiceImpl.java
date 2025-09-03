@@ -1,11 +1,12 @@
 package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.dto.*;
-import com.nsbm.uni_cricket_360.entity.BattingPerformance;
-import com.nsbm.uni_cricket_360.entity.BowlingPerformance;
+import com.nsbm.uni_cricket_360.entity.*;
 import com.nsbm.uni_cricket_360.enums.DismissalType;
+import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.*;
 import com.nsbm.uni_cricket_360.service.PerformanceService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -21,25 +23,31 @@ import java.util.stream.Collectors;
 public class PerformanceServiceImpl implements PerformanceService {
 
     @Autowired
-    BattingPerformanceRepo battingRepo;
+    private BattingPerformanceRepo battingRepo;
 
     @Autowired
-    BowlingPerformanceRepo bowlingRepo;
+    private BowlingPerformanceRepo bowlingRepo;
 
     @Autowired
-    FieldingPerformanceRepo fieldingRepo;
+    private FieldingPerformanceRepo fieldingRepo;
 
     @Autowired
-    FitnessTestRepo fitnessRepo;
+    private FitnessTestRepo fitnessRepo;
 
     @Autowired
-    InjuryRepo injuryRepo;
+    private InjuryRepo injuryRepo;
 
     @Autowired
-    MatchRepo matchRepo;
+    private PlayerRepo playerRepo;
 
     @Autowired
-    AttendanceRepo attendanceRepo;
+    private MatchRepo matchRepo;
+
+    @Autowired
+    private AttendanceRepo attendanceRepo;
+
+    @Autowired
+    private ModelMapper mapper;
 
     // ---------------- Batting ----------------
     @Override
@@ -188,13 +196,87 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     // ---------------- Fielding ----------------
-    /* @Override
-    public Integer getFieldingContribution(Long playerId) {
+    @Override
+    public FieldingStatsDTO getFieldingStats(Long playerId) {
         List<FieldingPerformance> records = fieldingRepo.findByPlayer_Id(playerId);
-        return records.stream().mapToInt(fp -> fp.getCatches() + fp.getRun_outs() + fp.getStumpings()).sum();
+
+        FieldingStatsDTO fieldingStatsDTO = new FieldingStatsDTO();
+
+        int totalCatches = records.stream().mapToInt(FieldingPerformance::getCatches).sum();
+        int totalDirectRunOuts = records.stream().mapToInt(FieldingPerformance::getDirect_run_outs).sum();
+        int totalAssistedRunOuts = records.stream().mapToInt(FieldingPerformance::getAssisted_run_outs).sum();
+        int totalStumpings = records.stream().mapToInt(FieldingPerformance::getStumpings).sum();
+
+        fieldingStatsDTO.setTotalCatches(totalCatches);
+        fieldingStatsDTO.setTotalDirectRunOuts(totalDirectRunOuts);
+        fieldingStatsDTO.setTotalAssistedRunOuts(totalAssistedRunOuts);
+        fieldingStatsDTO.setTotalStumpings(totalStumpings);
+
+        return fieldingStatsDTO;
     }
 
-    // ---------------- Fitness ----------------
+    @Override
+    public FieldingStatsDTO fieldingStatsPerMatch(Long playerId, Long matchId) {
+        // Fetch fielding performance for the specific player in the specific match
+        FieldingPerformance performance = fieldingRepo
+                .findByPlayer_IdAndMatch_Id(playerId, matchId)
+                .orElseThrow(() -> new NotFoundException("No fielding performance found for this player in this match"));
+
+        // Compute total run-outs for this match
+        int totalRunOuts = performance.getDirect_run_outs() + performance.getAssisted_run_outs();
+
+        Player player = playerRepo.findById(playerId).orElseThrow(() -> new NotFoundException("Player not found with id: " + playerId));
+        Match match = matchRepo.findById(matchId).orElseThrow(() -> new NotFoundException("Match details not found with id: " + matchId));
+
+        // Create DTO
+        FieldingStatsDTO fieldingStatsDTO = new FieldingStatsDTO();
+        fieldingStatsDTO.setTotalCatches(performance.getCatches());
+        fieldingStatsDTO.setTotalDirectRunOuts(performance.getDirect_run_outs());
+        fieldingStatsDTO.setTotalAssistedRunOuts(performance.getAssisted_run_outs());
+        fieldingStatsDTO.setTotalStumpings(performance.getStumpings());
+        fieldingStatsDTO.setPlayer(mapper.map(player, PlayerDTO.class));
+        fieldingStatsDTO.setMatch(mapper.map(match, MatchDTO.class));
+
+        return fieldingStatsDTO;
+    }
+
+    @Override
+    public RunOutStatsDTO getRunOutStats(Long playerId) {
+        // Fetch all fielding records for the player
+        List<FieldingPerformance> records = fieldingRepo.findByPlayer_Id(playerId);
+
+        // Aggregate direct & assisted
+        int directRunOuts = records.stream().mapToInt(FieldingPerformance::getDirect_run_outs).sum();
+        int assistedRunOuts = records.stream().mapToInt(FieldingPerformance::getAssisted_run_outs).sum();
+
+        // Total = direct + assisted
+        int totalRunOuts = directRunOuts + assistedRunOuts;
+
+        // Wrap in DTO
+        return new RunOutStatsDTO(directRunOuts, assistedRunOuts, totalRunOuts);
+    }
+
+    @Override
+    public RunOutStatsDTO getRunOutStatsPerMatch(Long playerId, Long matchId) {
+        FieldingPerformance performance = fieldingRepo
+                .findByPlayer_IdAndMatch_Id(playerId, matchId)
+                .orElseThrow(() -> new NotFoundException("No fielding performance found for this player in this match"));
+
+        int totalRunOuts = performance.getDirect_run_outs() + performance.getAssisted_run_outs();
+
+        Player player = playerRepo.findById(playerId).orElseThrow(() -> new NotFoundException("Player not found with id: " + playerId));
+        Match match = matchRepo.findById(matchId).orElseThrow(() -> new NotFoundException("Match details not found with id: " + matchId));
+
+        return new RunOutStatsDTO(
+                performance.getDirect_run_outs(),
+                performance.getAssisted_run_outs(),
+                totalRunOuts,
+                mapper.map(player, PlayerDTO.class),
+                mapper.map(match, MatchDTO.class)
+        );
+    }
+
+    /*// ---------------- Fitness ----------------
     @Override
     public Double getAverageSprintTime(Long playerId) {
         List<FitnessTest> tests = fitnessRepo.findByPlayer_Id(playerId);

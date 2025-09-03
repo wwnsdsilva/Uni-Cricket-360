@@ -27,6 +27,12 @@ public class FieldingPerformance {
     private Player player;
 
     private int catches;
-    private int run_outs;
+
+    // private int run_outs;
+
+    // 🔹 Split run-outs into direct & assisted
+    private int direct_run_outs;    // direct hits
+    private int assisted_run_outs;  // throws/assists
+
     private int stumpings;
 }

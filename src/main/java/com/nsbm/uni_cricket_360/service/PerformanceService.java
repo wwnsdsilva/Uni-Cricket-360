@@ -22,10 +22,17 @@ public interface PerformanceService {
     BowlingAverageDTO getBowlingAverage(Long playerId);
 
     EconomyRateDTO getEconomyRate(Long playerId);
-//
-//    // ---------------- Fielding ----------------
-//
-//    Integer getFieldingContribution(Long playerId);
+
+
+    // ---------------- Fielding ----------------
+
+    FieldingStatsDTO getFieldingStats(Long playerId);
+
+    FieldingStatsDTO fieldingStatsPerMatch(Long playerId, Long matchId);
+
+    RunOutStatsDTO getRunOutStats(Long playerId);
+
+    RunOutStatsDTO getRunOutStatsPerMatch(Long playerId, Long matchId);
 //
 //    // ---------------- Fitness ----------------
 //
