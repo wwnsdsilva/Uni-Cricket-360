@@ -28,7 +28,7 @@ public interface PerformanceService {
 
     FieldingStatsDTO getFieldingStats(Long playerId);
 
-    FieldingStatsDTO fieldingStatsPerMatch(Long playerId, Long matchId);
+    FieldingStatsDTO getFieldingStatsPerMatch(Long playerId, Long matchId);
 
     RunOutStatsDTO getRunOutStats(Long playerId);
 
@@ -43,15 +43,15 @@ public interface PerformanceService {
     // ---------------- Injury Metrics ----------------
 
     InjuryImpactDTO getInjuryImpact(Long playerId);
-//
-//    // ---------------- Team ----------------
-//
-//    Double getWinLossRatio(Long teamId);
-//
-//    Double getNetRunRate(Long teamId);
-//
-//    // ---------------- Training Attendance Metrics ----------------
-//
-//    Double getTrainingAttendance(Long teamId);
+
+    // ---------------- Team ----------------
+
+    WinLossRatioDTO getWinLossRatio(Long teamId);
+
+    NetRunRateDTO getNetRunRate(Long teamId);
+
+    // ---------------- Training Attendance Metrics ----------------
+
+    TrainingAttendanceDTO getTrainingAttendance(Long playerId);
 
 }

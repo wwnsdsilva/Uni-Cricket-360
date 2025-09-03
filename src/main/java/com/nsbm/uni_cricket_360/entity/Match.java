@@ -1,5 +1,6 @@
 package com.nsbm.uni_cricket_360.entity;
 
+import com.nsbm.uni_cricket_360.enums.MatchResult;
 import com.nsbm.uni_cricket_360.enums.MatchStatus;
 import com.nsbm.uni_cricket_360.enums.MatchType;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,10 @@ public class Match {
     @Enumerated(EnumType.STRING)
     private MatchType match_type;
 
-    private String result;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MatchResult result = MatchResult.NO_RESULT;
+
     private String image_url;
 
     @ManyToOne

@@ -2,10 +2,13 @@ package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.dto.*;
 import com.nsbm.uni_cricket_360.entity.*;
+import com.nsbm.uni_cricket_360.enums.AttendanceStatus;
 import com.nsbm.uni_cricket_360.enums.DismissalType;
+import com.nsbm.uni_cricket_360.enums.MatchResult;
 import com.nsbm.uni_cricket_360.exception.NotFoundException;
 import com.nsbm.uni_cricket_360.repository.*;
 import com.nsbm.uni_cricket_360.service.PerformanceService;
+import lombok.var;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,9 @@ public class PerformanceServiceImpl implements PerformanceService {
 
     @Autowired
     private MatchRepo matchRepo;
+
+    @Autowired
+    private InningRepo inningRepo;
 
     @Autowired
     private AttendanceRepo attendanceRepo;
@@ -216,7 +222,7 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
-    public FieldingStatsDTO fieldingStatsPerMatch(Long playerId, Long matchId) {
+    public FieldingStatsDTO getFieldingStatsPerMatch(Long playerId, Long matchId) {
         // Fetch fielding performance for the specific player in the specific match
         FieldingPerformance performance = fieldingRepo
                 .findByPlayer_IdAndMatch_Id(playerId, matchId)
@@ -307,34 +313,76 @@ public class PerformanceServiceImpl implements PerformanceService {
         );
     }
 
-    /*// ---------------- Team ----------------
+    // ---------------- Team ----------------
     @Override
-    public Double getWinLossRatio(Long teamId) {
+    public WinLossRatioDTO getWinLossRatio(Long teamId) {
         var matches = matchRepo.findByTeam(teamId);
-        long wins = matches.stream().filter(m -> "WIN".equalsIgnoreCase(m.getResult())).count();
-        long losses = matches.stream().filter(m -> "LOSS".equalsIgnoreCase(m.getResult())).count();
-        return (wins + losses) > 0 ? (double) wins / (wins + losses) : 0.0;
+
+        long wins = matches.stream()
+                .filter(m -> m.getResult() == MatchResult.WIN)
+                .count();
+
+        long losses = matches.stream()
+                .filter(m -> m.getResult() == MatchResult.LOSS)
+                .count();
+
+        double winLossRatio = (wins + losses) > 0 ? (double) wins / (wins + losses) : 0.0;
+        return new WinLossRatioDTO(winLossRatio);
     }
 
     @Override
-    public Double getNetRunRate(Long teamId) {
-        var matches = matchRepo.findByTeam(teamId);
-        int runsScored = matches.stream().mapToInt(Match::getRunsScored).sum();
-        int runsConceded = matches.stream().mapToInt(Match::getRunsConceded).sum();
-        double oversFaced = matches.stream().mapToDouble(m -> convertOversToDecimal(m.getOversFaced())).sum();
-        double oversBowled = matches.stream().mapToDouble(m -> convertOversToDecimal(m.getOversBowled())).sum();
+    public NetRunRateDTO getNetRunRate(Long teamId) {
+        var innings = inningRepo.findByMatch_Teams(teamId);
 
-        double rsPerOver = oversFaced > 0 ? runsScored / oversFaced : 0;
-        double rcPerOver = oversBowled > 0 ? runsConceded / oversBowled : 0;
-        return rsPerOver - rcPerOver;
+        // Team batting innings
+        int runsScored = innings.stream()
+                .filter(in -> in.getBatting_team().getId().equals(teamId))
+                .mapToInt(Inning::getRuns)
+                .sum();
+
+        double oversFaced = innings.stream()
+                .filter(in -> in.getBatting_team().getId().equals(teamId))
+                .mapToDouble(Inning::getOversDecimal)
+                .sum();
+
+        // Opponent batting innings
+        int runsConceded = innings.stream()
+                .filter(in -> !in.getBatting_team().getId().equals(teamId))
+                .mapToInt(Inning::getRuns)
+                .sum();
+
+        double oversBowled = innings.stream()
+                .filter(in -> !in.getBatting_team().getId().equals(teamId))
+                .mapToDouble(Inning::getOversDecimal)
+                .sum();
+
+        double runsScoredPerOver = oversFaced > 0 ? runsScored / oversFaced : 0;
+        double runsConcededPerOver = oversBowled > 0 ? runsConceded / oversBowled : 0;
+
+        double netRunRate = runsScoredPerOver - runsConcededPerOver;
+
+        return new NetRunRateDTO(
+                runsScored,
+                oversFaced,
+                runsConceded,
+                oversBowled,
+                runsScoredPerOver,
+                runsConcededPerOver,
+                netRunRate
+        );
     }
 
     @Override
-    public Double getTrainingAttendance(Long teamId) {
-        var records = attendanceRepo.findByTeamId(teamId);
-        long attended = records.stream().filter(a -> a.getStatus() == AttendanceStatus.PRESENT).count();
-        return records.size() > 0 ? (attended * 100.0) / records.size() : 0.0;
-    }*/
+    public TrainingAttendanceDTO getTrainingAttendance(Long playerId) {
+        var records = attendanceRepo.findByPlayer_Id(playerId);
+
+        long attended = records.stream()
+                .filter(a -> a.getStatus() == AttendanceStatus.PRESENT)
+                .count();
+
+        double trainingAttendance = records.size() > 0 ? (attended * 100.0) / records.size() : 0.0;
+        return new TrainingAttendanceDTO(trainingAttendance);
+    }
 
     // ---------------- Helper ----------------
     private double convertOversToDecimal(double overs) {

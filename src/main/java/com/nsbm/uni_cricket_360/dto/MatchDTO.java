@@ -1,5 +1,6 @@
 package com.nsbm.uni_cricket_360.dto;
 
+import com.nsbm.uni_cricket_360.enums.MatchResult;
 import com.nsbm.uni_cricket_360.enums.MatchStatus;
 import com.nsbm.uni_cricket_360.enums.MatchType;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,9 @@ public class MatchDTO {
     @Enumerated(EnumType.STRING)
     private MatchType match_type;
 
-    private String result;
+    @Enumerated(EnumType.STRING)
+    private MatchResult result;
+
     private String image_url;
     private AdminDTO scheduled_by;
 }

@@ -85,7 +85,7 @@ public class InningServiceImpl implements InningService {
 
         existingInning.setRuns(dto.getRuns());
         existingInning.setWickets(dto.getWickets());
-        existingInning.setOvers(dto.getOvers());
+        existingInning.setBalls(dto.getBalls());
 
         return mapper.map(inningRepo.save(existingInning), InningDTO.class);
     }
