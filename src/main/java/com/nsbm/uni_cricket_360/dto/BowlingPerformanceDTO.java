@@ -12,7 +12,8 @@ import lombok.ToString;
 public class BowlingPerformanceDTO {
     private Long id;
     private InningDTO inning;
-    private PlayerDTO player;
+//    private PlayerDTO player;
+    private Long player_id;  // instead of PlayerDTO
     private double overs;
     private int balls_bowled;
     private int runs_conceded;

@@ -6,25 +6,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @ToString
-public class TrainingSessionDTO {
+public class TrainingSessionBasicDTO {
     private Long id;
     private String description;
     private LocalDateTime date_time;
     private String title;
     private String venue;
-
-    @Enumerated(EnumType.STRING)
     private SessionStatus status;
 
-    private List<TrainingAttendanceDTO> attendance;
+
+    public TrainingSessionBasicDTO(Long id) {
+        this.id = id;
+    }
+
+    public TrainingSessionBasicDTO(Long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 }

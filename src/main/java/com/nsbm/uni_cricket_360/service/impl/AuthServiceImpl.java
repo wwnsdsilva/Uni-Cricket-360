@@ -35,7 +35,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponseUtil login(LoginDTO req) {
-        User user = userRepo.findByEmail(req.getEmail()).orElseThrow(() -> new NotFoundException("User not found. Please check your email."));
+//        User user = userRepo.findByEmail(req.getEmail()).orElseThrow(() -> new NotFoundException("User not found. Please check your email."));
+        User user = userRepo.findByUsername(req.getUsername()).orElseThrow(() -> new NotFoundException("User not found. Please check your username."));
 
         /*if (user == null) {
             throw new NotFoundException("User not found. Please check your email.");
@@ -43,6 +44,13 @@ public class AuthServiceImpl implements AuthService {
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid password. Please check your password.");
+        }
+
+        System.out.println("req: "+req.getUser_role().toLowerCase());
+        System.out.println("user: "+ user.getUser_role().toLowerCase());
+
+        if (!req.getUser_role().toLowerCase().equals(user.getUser_role().toLowerCase())) {
+            throw new InvalidCredentialsException("Invalid user role. Please check the user role.");
         }
 
         String user_role = user.getUser_role(); // from discriminator
@@ -54,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
         return new LoginResponseUtil(
                 "User with email " + user.getEmail() + " login successfully!",
                 accessToken,
+                user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user_role,

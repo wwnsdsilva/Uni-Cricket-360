@@ -40,16 +40,16 @@ public class PlayerController {
         );
     }
 
-    /*@GetMapping("/{id}")
-    public ResponseEntity<ResponseUtil> getPlayerById(@PathVariable Long id) {
-        try {
-            Player player = playerService.getPlayerById(id);
-            return ResponseEntity.ok(new ResponseUtil(200, "Player fetched successfully!", player));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseUtil(404, ex.getMessage(), null));
-        }
-    }*/
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseUtil> getPlayerCount() {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseUtil(
+                        200,
+                        "OK",
+                        playerService.getPlayerCount()
+                )
+        );
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,35 +60,6 @@ public class PlayerController {
                 playerService.getPlayerById(id)
         );
     }
-
-   /* @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseUtil> savePlayerr(
-            @Valid @RequestPart("player") PlayerDTO dto,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
-
-        System.out.println("------------------- Inside PlayerController: savePlayer -------------------");
-        System.out.println(dto);
-
-        // save the image and get URL/path
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl;
-            try {
-                imageUrl = playerService.savePlayerImage(imageFile);
-            } catch (RuntimeException ex) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseUtil(500, ex.getMessage(), null));
-            }
-            dto.setImage_url(imageUrl);
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseUtil(
-                        201,
-                        "Player registered successfully..!",
-                        playerService.savePlayer(dto)
-                )
-        );
-    }*/
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -102,39 +73,6 @@ public class PlayerController {
                 playerService.savePlayer(dto, imageFile)
         );
     }
-
-   /* @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseUtil> updatePlayer(
-            @PathVariable Long id,
-            @Valid @RequestPart("player") PlayerDTO dto,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile) {
-
-        System.out.println("------------------- Inside PlayerController: updatePlayer -------------------");
-        System.out.println(dto);
-
-        // set the ID from the path variable to the DTO
-        dto.setId(id);
-
-        // update image if provided
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl;
-            try {
-                imageUrl = playerService.savePlayerImage(imageFile);
-            } catch (RuntimeException ex) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ResponseUtil(500, ex.getMessage(), null));
-            }
-            dto.setImage_url(imageUrl);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseUtil(
-                        200,
-                        "Player updated successfully..!",
-                        playerService.updatePlayer(dto)
-                )
-        );
-    }*/
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -1,6 +1,8 @@
 package com.nsbm.uni_cricket_360.controller;
 
 import com.nsbm.uni_cricket_360.dto.MatchDTO;
+import com.nsbm.uni_cricket_360.dto.MatchStatsDTO;
+import com.nsbm.uni_cricket_360.dto.TeamDTO;
 import com.nsbm.uni_cricket_360.service.MatchService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ public class MatchController {
         );
     }
 
+    /** Saves only match data with image */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseUtil saveMatch(
@@ -53,6 +56,19 @@ public class MatchController {
         );
     }
 
+    /** Updates match scores with batting, bowling and fielding stats */
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/stats", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil saveMatchStatistics(@RequestBody MatchStatsDTO dto) {
+
+        return new ResponseUtil(
+                200,
+                "Match stats saved successfully..!",
+                matchService.saveMatchStatistics(dto)
+        );
+    }
+
+    /** Updates only match data with image */
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseUtil updateMatch(
@@ -64,6 +80,17 @@ public class MatchController {
                 200,
                 "Match updated successfully..!",
                 matchService.updateMatch(id, dto, imageFile)
+        );
+    }
+
+    /** Updates only match data without image */
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(value = "/scheduled/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil updateScheduledMatch(@PathVariable Long id, @RequestBody MatchDTO dto) {
+        return new ResponseUtil(
+                200,
+                "Scheduled match updated successfully..!",
+                matchService.updateScheduledMatch(id, dto)
         );
     }
 

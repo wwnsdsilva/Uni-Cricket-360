@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
@@ -104,5 +105,29 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining("; "));
 
         return new ResponseUtil(400, message, null);
+    }
+
+    // Handle all enum type mismatches in query params, path variables, etc.
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseUtil handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        if (ex.getRequiredType() != null && ex.getRequiredType().isEnum()) {
+            Class<?> enumType = ex.getRequiredType();
+            String allowedValues = Arrays.stream(enumType.getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+
+            String message = String.format(
+                    "Invalid value '%s' provided for %s. Allowed values are: %s",
+                    ex.getValue(),
+                    enumType.getSimpleName(),
+                    allowedValues
+            );
+
+            return new ResponseUtil(400, message, null);
+        }
+
+        // fallback for non-enum mismatches
+        return new ResponseUtil(400, "Invalid request parameter", null);
     }
 }

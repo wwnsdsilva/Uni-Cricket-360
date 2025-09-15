@@ -49,9 +49,14 @@ public class FieldingPerformanceServiceImpl implements FieldingPerformanceServic
         FieldingPerformance fieldingPerformance = mapper.map(dto, FieldingPerformance.class);
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            fieldingPerformance.setPlayer(player);
+        }*/
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             fieldingPerformance.setPlayer(player);
         }
 
@@ -70,9 +75,14 @@ public class FieldingPerformanceServiceImpl implements FieldingPerformanceServic
         FieldingPerformance existingFieldingPerformance = fieldingPerformanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Fielding performance details not found with id " + id));
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            existingFieldingPerformance.setPlayer(player);
+        }*/
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             existingFieldingPerformance.setPlayer(player);
         }
 

@@ -21,7 +21,7 @@ public class UserDTO {
     private String username;
 
     @Email(message = "Invalid email")
-    @NotBlank(message = "Email is required")
+//    @NotBlank(message = "Email is required")
     private String email;
 
     @NotBlank(message = "Password is required")
@@ -36,6 +36,10 @@ public class UserDTO {
     // Only required if user_role is ADMIN
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String admin_key;
+
+    public UserDTO(Long id) {
+        this.id = id;
+    }
 
     public UserDTO(@NotBlank(message = "User role is required") String user_role) {
         this.user_role = user_role;

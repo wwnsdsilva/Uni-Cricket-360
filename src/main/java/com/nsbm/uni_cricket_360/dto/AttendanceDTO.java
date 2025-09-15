@@ -16,8 +16,16 @@ import javax.persistence.Enumerated;
 public class AttendanceDTO {
     private Long id;
     private PlayerDTO player;
-    private TrainingSessionDTO session;
+    private TrainingSessionBasicDTO session;
 
     @Enumerated(EnumType.STRING)
     private AttendanceStatus status;
+
+    public AttendanceDTO(PlayerDTO player, TrainingSessionBasicDTO session, AttendanceStatus status) {
+        this.player = player;
+        this.session = session;
+        this.status = status;
+    }
+
+
 }

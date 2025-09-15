@@ -15,4 +15,6 @@ public interface AttendanceService {
     AttendanceDTO updateAttendance(Long id, AttendanceDTO dto);
 
     void deleteAttendance(Long id);
+
+    void markAttendance(AttendanceDTO dto);
 }

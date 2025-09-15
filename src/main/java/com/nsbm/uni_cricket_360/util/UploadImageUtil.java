@@ -15,7 +15,7 @@ import java.util.UUID;
 @Component
 public class UploadImageUtil {
 
-    public String saveImage(String uploadDir, MultipartFile imageFile) {
+    public String saveImage(String uploadDir, String subFolder, MultipartFile imageFile) {
         try {
             Path uploadPath = Paths.get(uploadDir);
 
@@ -28,7 +28,12 @@ public class UploadImageUtil {
 
             imageFile.transferTo(filePath.toFile());
 
-            return filePath.toString();
+
+            System.out.println(filePath.toString());
+            System.out.println("/uploads/" + subFolder + "/" + fileName);
+
+            // return filePath.toString();
+            return "/uploads/" + subFolder + "/" + fileName;
 
         } catch (IOException e) {
             throw new ImageFileException("Failed to store image file: " + e.getMessage());

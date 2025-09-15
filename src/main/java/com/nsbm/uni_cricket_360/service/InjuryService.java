@@ -16,4 +16,5 @@ public interface InjuryService {
 
     void deleteInjury(Long id);
 
+    int getInjuriesCount();
 }

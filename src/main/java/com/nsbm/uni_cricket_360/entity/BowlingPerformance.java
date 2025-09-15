@@ -33,7 +33,7 @@ public class BowlingPerformance {
     *
     * Store only total balls instead of overs
     * */
-    private int balls_bowled;
+    private int balls_bowled = (int) (this.overs * 6);
 
     /*
      * Then compute overs only when needed:

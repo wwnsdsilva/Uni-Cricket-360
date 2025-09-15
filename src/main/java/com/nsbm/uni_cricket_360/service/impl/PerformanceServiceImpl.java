@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -373,7 +372,7 @@ public class PerformanceServiceImpl implements PerformanceService {
     }
 
     @Override
-    public TrainingAttendanceDTO getTrainingAttendance(Long playerId) {
+    public TrainingAttendancePercentageDTO getTrainingAttendance(Long playerId) {
         var records = attendanceRepo.findByPlayer_Id(playerId);
 
         long attended = records.stream()
@@ -381,7 +380,7 @@ public class PerformanceServiceImpl implements PerformanceService {
                 .count();
 
         double trainingAttendance = records.size() > 0 ? (attended * 100.0) / records.size() : 0.0;
-        return new TrainingAttendanceDTO(trainingAttendance);
+        return new TrainingAttendancePercentageDTO(trainingAttendance);
     }
 
     // ---------------- Helper ----------------

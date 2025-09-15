@@ -16,7 +16,8 @@ import javax.persistence.Enumerated;
 public class BattingPerformanceDTO {
     private Long id;
     private InningDTO inning;
-    private PlayerDTO player;
+//    private PlayerDTO player;
+    private Long player_id;  // instead of PlayerDTO
     private int runs;
     private int balls_faced;
     private int fours;

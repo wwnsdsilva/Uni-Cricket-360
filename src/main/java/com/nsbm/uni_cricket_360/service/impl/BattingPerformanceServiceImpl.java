@@ -50,9 +50,15 @@ public class BattingPerformanceServiceImpl implements BattingPerformanceService 
         BattingPerformance battingPerformance = mapper.map(dto, BattingPerformance.class);
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            battingPerformance.setPlayer(player);
+        }*/
+
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             battingPerformance.setPlayer(player);
         }
 
@@ -71,9 +77,14 @@ public class BattingPerformanceServiceImpl implements BattingPerformanceService 
         BattingPerformance existingBattingPerformance = battingPerformanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Batting performance details not found with id " + id));
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            existingBattingPerformance.setPlayer(player);
+        }*/
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             existingBattingPerformance.setPlayer(player);
         }
 

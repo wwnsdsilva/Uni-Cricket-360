@@ -19,4 +19,9 @@ public class EventDTO {
     private String description;
     private String image_url;
     private AdminDTO created_by;
+    private boolean is_featured;
+
+    public boolean isIs_featured() {
+        return is_featured;
+    }
 }

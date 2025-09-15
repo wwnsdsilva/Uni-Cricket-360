@@ -12,7 +12,8 @@ import lombok.ToString;
 public class FieldingPerformanceDTO {
     private Long id;
     private MatchDTO match;
-    private PlayerDTO player;
+//    private PlayerDTO player;
+    private Long player_id;  // instead of PlayerDTO
     private int catches;
 
     // private int run_outs;

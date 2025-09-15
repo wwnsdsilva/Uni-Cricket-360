@@ -82,4 +82,9 @@ public class InjuryServiceImpl implements InjuryService {
         Injury injury = injuryRepo.findById(id).orElseThrow(() -> new NotFoundException("Injury record not found with id " + id));
         injuryRepo.delete(injury);
     }
+
+    @Override
+    public int getInjuriesCount() {
+        return injuryRepo.findAll().size();
+    }
 }

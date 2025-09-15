@@ -52,6 +52,6 @@ public interface PerformanceService {
 
     // ---------------- Training Attendance Metrics ----------------
 
-    TrainingAttendanceDTO getTrainingAttendance(Long playerId);
+    TrainingAttendancePercentageDTO getTrainingAttendance(Long playerId);
 
 }

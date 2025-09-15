@@ -21,9 +21,9 @@ public class LoginDTO {
         this.password = password;
     }
 
-    public LoginDTO(String username, String email, String password) {
+    public LoginDTO(String username, String password, String user_role) {
         this.username = username;
-        this.email = email;
         this.password = password;
+        this.user_role = user_role;
     }
 }

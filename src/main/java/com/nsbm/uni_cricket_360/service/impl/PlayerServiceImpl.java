@@ -102,10 +102,17 @@ public class PlayerServiceImpl implements PlayerService {
         // Update fields (keep existingPlayer values if null in dto)
         if (dto.getFirst_name() != null) existingPlayer.setFirst_name(dto.getFirst_name());
         if (dto.getLast_name() != null) existingPlayer.setLast_name(dto.getLast_name());
+        if (dto.getName() != null) existingPlayer.setName(dto.getName());
         if (dto.getDob() != null) existingPlayer.setDob(dto.getDob());
         if (dto.getAge() != 0) existingPlayer.setAge(dto.getAge());
         if (dto.getContact() != null) existingPlayer.setContact(dto.getContact());
         if (dto.getPlayer_role() != null) existingPlayer.setPlayer_role(dto.getPlayer_role());
+
+        if (dto.getUniversity_id() != null) existingPlayer.setUniversity_id(dto.getUniversity_id());
+        if (dto.getBatting_style() != null) existingPlayer.setBatting_style(dto.getBatting_style());
+        if (dto.getBowling_style() != null) existingPlayer.setBowling_style(dto.getBowling_style());
+        if (dto.getJersey_no() != 0) existingPlayer.setJersey_no(dto.getJersey_no());
+        if (dto.getJoined_date() != null) existingPlayer.setJoined_date(dto.getJoined_date());
 
         String oldImage = null;
         String newImageUrl;
@@ -162,8 +169,13 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepo.delete(player);
     }
 
+    @Override
+    public int getPlayerCount() {
+        return playerRepo.findAll().size();
+    }
+
     private String savePlayerImage(MultipartFile imageFile) {
-        return uploadImageUtil.saveImage(uploadDir, imageFile);
+        return uploadImageUtil.saveImage(uploadDir, "players", imageFile);
     }
 
     private void deleteOldImageFile(String oldImageUrl){
@@ -174,40 +186,5 @@ public class PlayerServiceImpl implements PlayerService {
                 throw new ImageFileException("Failed to delete event image: " + e.getMessage());
             }
         }
-    }
-
-    //    @Override
-    public PlayerDTO savePlayer(PlayerDTO dto) {
-        Player player = mapper.map(dto, Player.class);
-
-        // Fetch actual team from DB to avoid null fields
-        if (dto.getTeam() != null && dto.getTeam().getId() != null) {
-            Team team = teamRepo.findById(dto.getTeam().getId()).orElseThrow(() -> new NotFoundException("Team not found with id: " + dto.getTeam().getId()));
-            player.setTeam(team);
-        }
-
-        //Hash password before saving
-        player.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        Player saved = playerRepo.save(player);
-        return mapper.map(saved, PlayerDTO.class);
-
-    }
-
-    //    @Override
-    public PlayerDTO updatePlayer(PlayerDTO dto) {
-        Player existingPlayer = playerRepo.findById(dto.getId())
-                .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getId()));
-
-        existingPlayer.setFirst_name(dto.getFirst_name());
-        existingPlayer.setLast_name(dto.getLast_name());
-        existingPlayer.setDob(dto.getDob());
-        existingPlayer.setAge(dto.getAge());
-        existingPlayer.setContact(dto.getContact());
-        existingPlayer.setPlayer_role(dto.getPlayer_role());
-        existingPlayer.setImage_url(dto.getImage_url()); // update only if new image is provided
-
-        Player updated = playerRepo.save(existingPlayer);
-        return mapper.map(updated, PlayerDTO.class);
     }
 }

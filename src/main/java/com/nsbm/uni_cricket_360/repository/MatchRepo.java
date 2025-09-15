@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface MatchRepo extends JpaRepository<Match, Long> {
 
-    @Query("SELECT m FROM Match m WHERE m.home_team.id = :teamId OR m.away_team.id = :teamId")
+    @Query("SELECT m FROM Match m WHERE m.opponent.id = :teamId")
     List<Match> findByTeam(@Param("teamId")Long teamId);
 
 }

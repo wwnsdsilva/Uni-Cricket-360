@@ -23,6 +23,8 @@ public interface PlayerService {
 
     void deletePlayer(Long id);
 
+    int getPlayerCount();
+
 //    PlayerDTO savePlayer(PlayerDTO dto);
 
 //    String savePlayerImage(MultipartFile imageFile);

@@ -26,6 +26,9 @@ public class Event {
     private String image_url;
 
     @ManyToOne
-    @JoinColumn (name = "created_by", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
     private Admin created_by;
+
+    private boolean is_featured;
 }
+

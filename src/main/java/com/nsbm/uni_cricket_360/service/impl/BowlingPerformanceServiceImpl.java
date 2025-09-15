@@ -50,9 +50,14 @@ public class BowlingPerformanceServiceImpl implements BowlingPerformanceService 
         BowlingPerformance bowlingPerformance = mapper.map(dto, BowlingPerformance.class);
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            bowlingPerformance.setPlayer(player);
+        }*/
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             bowlingPerformance.setPlayer(player);
         }
 
@@ -75,9 +80,14 @@ public class BowlingPerformanceServiceImpl implements BowlingPerformanceService 
         BowlingPerformance existingBowlingPerformance = bowlingPerformanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Bowling performance details not found with id " + id));
 
         // Set player from DB
-        if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
+        /*if (dto.getPlayer() != null && dto.getPlayer().getId() != null) {
             Player player = playerRepo.findById(dto.getPlayer().getId())
                     .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer().getId()));
+            existingBowlingPerformance.setPlayer(player);
+        }*/
+        if (dto.getPlayer_id() != null) {
+            Player player = playerRepo.findById(dto.getPlayer_id())
+                    .orElseThrow(() -> new NotFoundException("Player not found with id: " + dto.getPlayer_id()));
             existingBowlingPerformance.setPlayer(player);
         }
 

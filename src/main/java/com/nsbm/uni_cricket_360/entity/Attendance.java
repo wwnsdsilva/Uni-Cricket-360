@@ -1,5 +1,6 @@
 package com.nsbm.uni_cricket_360.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nsbm.uni_cricket_360.enums.AttendanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Attendance {
 
     @ManyToOne
     @JoinColumn(name = "session_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnoreProperties("attendance")  // ✅ prevent Session → Attendance loop
     private TrainingSession session;
 
     @Enumerated(EnumType.STRING)

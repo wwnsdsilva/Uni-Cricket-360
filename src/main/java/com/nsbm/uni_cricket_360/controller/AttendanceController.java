@@ -57,6 +57,17 @@ public class AttendanceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(value = "/mark", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil markAttendance(@RequestBody AttendanceDTO dto) {
+        attendanceService.markAttendance(dto);
+        return new ResponseUtil(
+                200,
+                "Attendance marked successfully!",
+                null
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseUtil deleteAttendance(@PathVariable Long id) {
         attendanceService.deleteAttendance(id);

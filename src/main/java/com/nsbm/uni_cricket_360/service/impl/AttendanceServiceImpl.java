@@ -2,6 +2,8 @@ package com.nsbm.uni_cricket_360.service.impl;
 
 import com.nsbm.uni_cricket_360.dto.AttendanceDTO;
 import com.nsbm.uni_cricket_360.dto.InjuryDTO;
+import com.nsbm.uni_cricket_360.dto.PlayerDTO;
+import com.nsbm.uni_cricket_360.dto.TrainingSessionBasicDTO;
 import com.nsbm.uni_cricket_360.entity.Attendance;
 import com.nsbm.uni_cricket_360.entity.Injury;
 import com.nsbm.uni_cricket_360.entity.Player;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -98,5 +101,25 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void deleteAttendance(Long id) {
         Attendance attendance = attendanceRepo.findById(id).orElseThrow(() -> new NotFoundException("Attendance record not found with id " + id));
         attendanceRepo.delete(attendance);
+    }
+
+    @Override
+    public void markAttendance(AttendanceDTO dto) {
+
+        TrainingSession session = trainingSessionRepo.findById(dto.getSession().getId())
+                .orElseThrow(() -> new NotFoundException("Session not found with id " + dto.getSession().getId()));
+
+        Player player = playerRepo.findById(dto.getPlayer().getId())
+                .orElseThrow(() -> new NotFoundException("Player not found with id " + dto.getPlayer().getId()));
+
+        Attendance existingAttendance = attendanceRepo.findAttendanceBySessionAndPlayer(session, player)
+                .orElseThrow(() -> new NotFoundException("Attendance not found for player " + player.getId()));
+
+
+//        System.out.println(existingAttendance.toString());
+
+        // ✅ update status
+        existingAttendance.setStatus(dto.getStatus());
+        attendanceRepo.save(existingAttendance);
     }
 }

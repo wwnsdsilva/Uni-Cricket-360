@@ -27,6 +27,16 @@ public class InjuryController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil getInjuriesCount() {
+        return new ResponseUtil(
+                200,
+                "OK",
+                injuryService.getInjuriesCount()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseUtil searchInjury(@PathVariable Long id) {
         return new ResponseUtil(

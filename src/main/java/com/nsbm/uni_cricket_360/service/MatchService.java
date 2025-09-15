@@ -1,6 +1,7 @@
 package com.nsbm.uni_cricket_360.service;
 
 import com.nsbm.uni_cricket_360.dto.MatchDTO;
+import com.nsbm.uni_cricket_360.dto.MatchStatsDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -17,4 +18,8 @@ public interface MatchService {
     MatchDTO updateMatchImage(Long id, MultipartFile imageFile);
 
     void deleteMatch(Long id);
+
+    MatchStatsDTO saveMatchStatistics(MatchStatsDTO dto);
+
+    MatchDTO updateScheduledMatch(Long id, MatchDTO dto);
 }

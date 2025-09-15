@@ -1,12 +1,17 @@
 package com.nsbm.uni_cricket_360.controller;
 
+import com.nsbm.uni_cricket_360.dto.TrainingSessionBasicDTO;
 import com.nsbm.uni_cricket_360.dto.TrainingSessionDTO;
+import com.nsbm.uni_cricket_360.enums.SessionStatus;
 import com.nsbm.uni_cricket_360.service.TrainingSessionService;
 import com.nsbm.uni_cricket_360.util.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @CrossOrigin
@@ -23,6 +28,26 @@ public class TrainingSessionController {
                 200,
                 "OK",
                 trainingSessionService.getAllTrainingSessions()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/attendance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil getAllSessionsWithAttendance() {
+        return new ResponseUtil(
+                200,
+                "OK",
+                trainingSessionService.getAllSessionsWithAttendance()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseUtil getTrainingSessionCount(@RequestParam SessionStatus status) {
+        return new ResponseUtil(
+                200,
+                "OK",
+                trainingSessionService.getTrainingSessionCount(status)
         );
     }
 
@@ -48,7 +73,7 @@ public class TrainingSessionController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil updateSession(@PathVariable Long id, @RequestBody TrainingSessionDTO dto) {
+    public ResponseUtil updateSession(@PathVariable Long id, @RequestBody TrainingSessionBasicDTO dto) {
         return new ResponseUtil(
                 200,
                 "Training session updated successfully!",

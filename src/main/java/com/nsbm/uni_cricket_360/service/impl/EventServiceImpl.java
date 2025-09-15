@@ -92,6 +92,8 @@ public class EventServiceImpl implements EventService {
         if (dto.getDate_time() != null) event.setDate_time(dto.getDate_time());
         if (dto.getVenue() != null) event.setVenue(dto.getVenue());
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
+        System.out.println(dto.isIs_featured());
+        event.set_featured(dto.isIs_featured());
 
         String oldImage = null;
         String newImageUrl;
@@ -141,7 +143,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private String saveEventImage(MultipartFile imageFile) {
-        return uploadImageUtil.saveImage(uploadDir, imageFile);
+        return uploadImageUtil.saveImage(uploadDir, "events", imageFile);
     }
 
     private void deleteOldImageFile(String oldImageUrl){
